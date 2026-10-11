@@ -6,7 +6,7 @@ Windows XP desktop ([XP.css](https://botoxparty.github.io/XP.css/)), and every p
 as a window. It's hosted for free on GitHub Pages.
 
 Under the costume it's a normal website: every post has its own URL, pages are plain
-HTML that works without JavaScript, and there's an RSS feed and a sitemap.
+HTML that works without JavaScript, and there's a sitemap.
 
 ## Run it locally
 
@@ -34,7 +34,7 @@ Tip: the boot screen only plays once per browser session. To see it again, use
    ---
    title: "My First Real Post"
    date: 2026-10-12              # YYYY-MM-DD, used for sorting (newest first)
-   description: "One sentence for the post list, RSS, and search results."
+   description: "One sentence for the post list and search results."
    tags: [notes, homelab]        # optional
    draft: true                   # optional; true = only visible in `npm run dev`
    ---
@@ -77,7 +77,6 @@ src/
     about.astro         ← Notepad window              → /about/
     recycle-bin.astro   ← a joke                      → /recycle-bin/
     404.astro           ← blue screen of death        → any missing URL
-    rss.xml.ts          ← RSS feed                    → /rss.xml
   scripts/
     boot.ts             ← boot animation (skippable, once per session)
     desktop.ts          ← clock, window dragging/minimize/maximize

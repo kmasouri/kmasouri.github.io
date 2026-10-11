@@ -384,14 +384,6 @@ html:not(.js) .balloon-close {
   white-space: nowrap;
 }
 
-.tray-icon {
-  display: flex;
-}
-
-.tray-icon:focus-visible {
-  outline: 1px dotted #fff;
-}
-
 /* ------------------------------------------------------------- start menu */
 
 .start-menu {
@@ -1160,10 +1152,6 @@ html:not(.js) .title-bar-controls [data-action] {
 
   .taskbar button.task-button {
     font-size: 12px;
-  }
-
-  .tray .tray-icon {
-    display: none;
   }
 
   .balloon {

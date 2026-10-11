@@ -21,7 +21,6 @@ TODO: The topics you plan to cover, e.g.:
 
 - GitHub: [github.com/kmasouri](https://github.com/kmasouri)
 - Email: [k1masouri@gmail.com](mailto:k1masouri@gmail.com)
-- RSS: [subscribe to new posts](/rss.xml)
 
 ## About this site
 

@@ -33,7 +33,7 @@ Each post starts with a block like this:
 ---
 title: "How This Blog Works"
 date: 2026-10-05
-description: "Shown in the post list, RSS feed, and search results."
+description: "Shown in the post list and search results."
 tags: [meta, astro]
 draft: false
 ---

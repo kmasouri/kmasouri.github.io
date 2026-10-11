@@ -25,6 +25,6 @@ HTML, serves it for free, and I can open my archive in any text editor.
 
 Because the first computer I really *messed around with* looked like this, and
 a personal site should feel personal. Under the retro look it's a normal static
-site: real links, real headings, an RSS feed, and it works without JavaScript.
+site: real links, real headings, and it works without JavaScript.
 
 Thanks for stopping by. Try the Start menu.

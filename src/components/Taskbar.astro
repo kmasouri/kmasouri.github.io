@@ -55,7 +55,6 @@ const recent = (await getPosts()).slice(0, 5);
       </div>
       <div class="start-right">
         <ul>
-          <li><a href="/rss.xml"><img src="/icons/rss.svg" alt="" width="24" height="24" /><span>RSS Feed</span></a></li>
           <li><a href={GITHUB_URL} rel="me noopener"><img src="/icons/globe.svg" alt="" width="24" height="24" /><span>GitHub</span></a></li>
           <li><a href={`mailto:${EMAIL}`}><img src="/icons/mail.svg" alt="" width="24" height="24" /><span>E-mail me</span></a></li>
           <li><a href="/recycle-bin/"><img src="/icons/recycle-bin.svg" alt="" width="24" height="24" /><span>Recycle Bin</span></a></li>
@@ -81,7 +80,6 @@ const recent = (await getPosts()).slice(0, 5);
   </ul>
 
   <div class="tray">
-    <a href="/rss.xml" class="tray-icon"><img src="/icons/rss.svg" alt="RSS feed" width="16" height="16" /></a>
     <time class="clock" id="clock"></time>
   </div>
 </footer>

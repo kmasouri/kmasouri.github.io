@@ -45,7 +45,7 @@ function runBoot(boot: HTMLElement) {
   }
 
   async function memoryTest(el: HTMLElement, total: number) {
-    const label = 'Memory Testing : ';
+    const label = 'Memory Test :  ';
     const frames = reduceMotion ? 1 : 40;
     for (let f = 1; f <= frames && !finished; f++) {
       el.textContent = `${label}${Math.round((total * f) / frames)}K`;
