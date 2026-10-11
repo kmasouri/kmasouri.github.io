@@ -1,0 +1,87 @@
+---
+import { AUTHOR, EMAIL, GITHUB_URL } from '../consts';
+import { getPosts, postUrl } from '../lib/posts';
+
+export interface Task {
+  /** id of the window element this button controls */
+  id: string;
+  title: string;
+  icon: string;
+}
+
+interface Props {
+  tasks: Task[];
+}
+
+const { tasks } = Astro.props;
+const recent = (await getPosts()).slice(0, 5);
+---
+
+<footer class="taskbar" aria-label="Taskbar">
+  <button class="start-button" type="button" popovertarget="start-menu">
+    <img src="/icons/start.svg" alt="" width="20" height="20" />
+    <span>start</span>
+  </button>
+
+  <div id="start-menu" class="start-menu" popover>
+    <div class="start-header">
+      <img src="/icons/user.svg" alt="" width="42" height="42" />
+      <span>{AUTHOR}</span>
+    </div>
+    <nav class="start-body" aria-label="Start menu">
+      <div class="start-left">
+        <ul>
+          <li>
+            <a href="/posts/"><img src="/icons/folder.svg" alt="" width="32" height="32" /><span><strong>My Blog</strong><small>All posts</small></span></a>
+          </li>
+          <li>
+            <a href="/about/"><img src="/icons/notepad.svg" alt="" width="32" height="32" /><span><strong>About Me</strong><small>about.txt</small></span></a>
+          </li>
+        </ul>
+        {
+          recent.length > 0 && (
+            <>
+              <h2 class="start-section">Recent posts</h2>
+              <ul class="start-recent">
+                {recent.map((post) => (
+                  <li>
+                    <a href={postUrl(post)}><img src="/icons/page.svg" alt="" width="24" height="24" /><span>{post.data.title}</span></a>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )
+        }
+      </div>
+      <div class="start-right">
+        <ul>
+          <li><a href="/rss.xml"><img src="/icons/rss.svg" alt="" width="24" height="24" /><span>RSS Feed</span></a></li>
+          <li><a href={GITHUB_URL} rel="me noopener"><img src="/icons/globe.svg" alt="" width="24" height="24" /><span>GitHub</span></a></li>
+          <li><a href={`mailto:${EMAIL}`}><img src="/icons/mail.svg" alt="" width="24" height="24" /><span>E-mail me</span></a></li>
+          <li><a href="/recycle-bin/"><img src="/icons/recycle-bin.svg" alt="" width="24" height="24" /><span>Recycle Bin</span></a></li>
+        </ul>
+      </div>
+    </nav>
+    <div class="start-footer">
+      <a href="/" data-restart><img src="/icons/power.svg" alt="" width="22" height="22" /><span>Restart</span></a>
+    </div>
+  </div>
+
+  <ul class="task-list" aria-label="Open windows">
+    {
+      tasks.map((task) => (
+        <li>
+          <button class="task-button" type="button" data-task={task.id} aria-controls={task.id} aria-pressed="true">
+            <img src={task.icon} alt="" width="16" height="16" />
+            <span>{task.title}</span>
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="tray">
+    <a href="/rss.xml" class="tray-icon"><img src="/icons/rss.svg" alt="RSS feed" width="16" height="16" /></a>
+    <time class="clock" id="clock"></time>
+  </div>
+</footer>

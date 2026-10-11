@@ -1,0 +1,22 @@
+{
+  "name": "kmasouri.github.io",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/rss": "^4.0.19",
+    "@astrojs/sitemap": "^3.7.4",
+    "astro": "^7.3.8",
+    "tuicss": "^2.1.2",
+    "xp.css": "^0.2.6"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

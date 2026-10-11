@@ -1,0 +1,66 @@
+---
+import { SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404: Page not found | {SITE_TITLE}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <main class="bsod">
+      <h1><span>Windows</span></h1>
+      <p>A problem has been detected and the page you requested could not be found.</p>
+      <p><strong>PAGE_NOT_FOUND</strong> (error 404)</p>
+      <p>If this is the first time you've seen this error screen, check the address for typos. If you followed a link here, the post may have moved.</p>
+      <p>Technical information:</p>
+      <p>*** STOP: 0x00000404 (0x0000BLOG, 0x00000000, 0x00000000)</p>
+      <p><a href="/">Press any key or click here to return to the desktop _</a></p>
+    </main>
+    <script is:inline>
+      document.addEventListener('keydown', function (e) {
+        if (e.key !== 'Tab' && e.key !== 'Shift') window.location.href = '/';
+      });
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @font-face {
+    font-family: 'Perfect DOS VGA 437 Win';
+    src: url('xp.css/dist/PerfectDOSVGA437Win.woff2') format('woff2');
+  }
+  html,
+  body {
+    margin: 0;
+    min-height: 100%;
+    background: #0000aa;
+    color: #fff;
+  }
+  .bsod {
+    max-width: 80ch;
+    padding: 6vh 5vw;
+    font: 18px/1.5 'Perfect DOS VGA 437 Win', 'Lucida Console', 'Courier New', monospace;
+  }
+  .bsod h1 {
+    margin: 0 0 1.5em;
+    font: inherit;
+    text-align: center;
+  }
+  .bsod h1 span {
+    background: #aaa;
+    color: #0000aa;
+    padding: 0 0.5em;
+  }
+  .bsod a {
+    color: #fff;
+  }
+  .bsod a:focus-visible {
+    outline: 2px dashed #fff;
+    outline-offset: 4px;
+  }
+</style>

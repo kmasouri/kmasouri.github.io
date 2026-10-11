@@ -1,0 +1,59 @@
+---
+import Desktop from '../layouts/Desktop.astro';
+import XPWindow from '../components/XPWindow.astro';
+
+const icon = '/icons/recycle-bin.svg';
+const items = [
+  { name: 'notion-export-FINAL-final.zip', from: 'C:\\My Documents', icon: '/icons/folder.svg' },
+  { name: 'blog-redesign-v1 (abandoned).html', from: 'C:\\My Documents\\Projects', icon: '/icons/page.svg' },
+  { name: 'untitled-draft-47.txt', from: 'C:\\Desktop', icon: '/icons/notepad.svg' },
+  { name: 'New Folder (7)', from: 'C:\\Desktop', icon: '/icons/folder.svg' },
+];
+---
+
+<Desktop title="Recycle Bin" description="Things that didn't make the cut." noindex tasks={[{ id: 'bin-window', title: 'Recycle Bin', icon }]}>
+  <XPWindow id="bin-window" title="Recycle Bin" icon={icon} width="620px">
+    <div slot="chrome">
+      <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
+      <div class="toolbar">
+        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&larr;</span> Back</a>
+        <span class="tb-sep" aria-hidden="true"></span>
+        <button type="button" data-empty-bin>Empty Recycle Bin</button>
+      </div>
+    </div>
+    <div class="file-pane">
+      <h1>Recycle Bin</h1>
+      <ul class="file-list" data-bin-list>
+        {
+          items.map((item) => (
+            <li>
+              <img src={item.icon} alt="" width="40" height="40" />
+              <span class="file-title">{item.name}</span>
+              <p class="file-desc">Original location: {item.from}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="empty-note" data-bin-empty hidden>The Recycle Bin is empty.</p>
+    </div>
+    <div slot="status" class="status-bar">
+      <p class="status-bar-field" data-bin-count>{items.length} object(s)</p>
+    </div>
+  </XPWindow>
+</Desktop>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-empty-bin]');
+  button?.addEventListener('click', () => {
+    document.querySelector('[data-bin-list]')?.remove();
+    document.querySelector<HTMLElement>('[data-bin-empty]')!.hidden = false;
+    document.querySelector('[data-bin-count]')!.textContent = '0 object(s)';
+    button.disabled = true;
+  });
+</script>
+
+<style>
+  html:not(.js) [data-empty-bin] {
+    display: none;
+  }
+</style>

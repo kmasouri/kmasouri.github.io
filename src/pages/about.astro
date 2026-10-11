@@ -1,0 +1,19 @@
+---
+import Desktop from '../layouts/Desktop.astro';
+import XPWindow from '../components/XPWindow.astro';
+import { AUTHOR } from '../consts';
+// The About text lives in Markdown so it's easy to edit.
+import { Content } from '../data/about.md';
+
+const icon = '/icons/notepad.svg';
+---
+
+<Desktop title="About Me" description={`About ${AUTHOR}.`} tasks={[{ id: 'about-window', title: 'about.txt - Notepad', icon }]}>
+  <XPWindow id="about-window" title="about.txt - Notepad" icon={icon} width="680px" height="min(620px, calc(100% - 48px))">
+    <div slot="chrome" class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>Format</span><span>View</span><span>Help</span></div>
+    <div class="prose notepad">
+      <h1 class="sr-only">About Me</h1>
+      <Content />
+    </div>
+  </XPWindow>
+</Desktop>

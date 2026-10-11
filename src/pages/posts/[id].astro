@@ -1,0 +1,100 @@
+---
+import { render } from 'astro:content';
+import Desktop from '../../layouts/Desktop.astro';
+import XPWindow from '../../components/XPWindow.astro';
+import { formatDate, getPosts, postUrl, readingTime, type Post } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  // posts are newest first: "newer" is the previous item, "older" the next
+  return posts.map((post, i) => ({
+    params: { id: post.id },
+    props: { post, newer: posts[i - 1], older: posts[i + 1] },
+  }));
+}
+
+interface Props {
+  post: Post;
+  newer?: Post;
+  older?: Post;
+}
+
+const { post, newer, older } = Astro.props;
+const { Content } = await render(post);
+const { title, description, date, tags } = post.data;
+const url = new URL(postUrl(post), Astro.site).href;
+const icon = '/icons/page.svg';
+---
+
+<Desktop
+  title={title}
+  description={description}
+  article={{ published: date, tags }}
+  tasks={[{ id: 'post-window', title, icon }]}
+>
+  <XPWindow id="post-window" title={`${title} - Internet Explorer`} icon={icon} width="860px" height="calc(100% - 48px)" closeHref="/posts/">
+    <div slot="chrome">
+      <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
+      <nav class="toolbar" aria-label="Browser">
+        <a class="tb-btn" href="/posts/"><span class="tb-arrow" aria-hidden="true">&larr;</span> Back<span class="sr-only"> to My Blog</span></a>
+        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&#8962;</span> Home</a>
+        <span class="tb-sep" aria-hidden="true"></span>
+        <a class="tb-btn" href="/rss.xml"><img src="/icons/rss.svg" alt="" width="20" height="20" /> RSS</a>
+      </nav>
+      <div class="addressbar">
+        <label for="address">Address</label>
+        <input id="address" type="text" readonly value={url} data-address />
+      </div>
+    </div>
+
+    <article class="prose">
+      <header>
+        <h1>{title}</h1>
+        <div class="post-meta">
+          <time datetime={date.toISOString()}>{formatDate(date)}</time>
+          <span>{readingTime(post.body)}</span>
+          {
+            tags.length > 0 && (
+              <ul class="tag-list" aria-label="Tags">
+                {tags.map((tag) => (
+                  <li class="tag">{tag}</li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+      </header>
+
+      <Content />
+
+      {
+        (newer || older) && (
+          <nav class="post-nav" aria-label="More posts">
+            <div>
+              {older && (
+                <a href={postUrl(older)} rel="prev">
+                  <small>&larr; Older</small>
+                  {older.data.title}
+                </a>
+              )}
+            </div>
+            <div class="next">
+              {newer && (
+                <a href={postUrl(newer)} rel="next">
+                  <small>Newer &rarr;</small>
+                  {newer.data.title}
+                </a>
+              )}
+            </div>
+          </nav>
+        )
+      }
+    </article>
+
+    <div slot="status" class="status-bar">
+      <p class="status-bar-field">Done</p>
+      <p class="status-bar-field">{formatDate(date, 'short')}</p>
+      <p class="status-bar-field">Internet</p>
+    </div>
+  </XPWindow>
+</Desktop>

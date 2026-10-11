@@ -1,0 +1,25 @@
+---
+import { GITHUB_URL } from '../consts';
+
+const icons = [
+  { label: 'My Blog', href: '/posts/', icon: '/icons/folder.svg' },
+  { label: 'About Me', href: '/about/', icon: '/icons/notepad.svg' },
+  { label: 'Recycle Bin', href: '/recycle-bin/', icon: '/icons/recycle-bin.svg' },
+  { label: 'GitHub', href: GITHUB_URL, icon: '/icons/globe.svg', external: true },
+];
+---
+
+<nav class="desktop-icons" aria-label="Desktop">
+  <ul>
+    {
+      icons.map(({ label, href, icon, external }) => (
+        <li>
+          <a class="desktop-icon" href={href} rel={external ? 'me noopener' : undefined}>
+            <img src={icon} alt="" width="48" height="48" />
+            <span>{label}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>

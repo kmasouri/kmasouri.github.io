@@ -1,0 +1,71 @@
+---
+import Desktop from '../../layouts/Desktop.astro';
+import XPWindow from '../../components/XPWindow.astro';
+import { AUTHOR } from '../../consts';
+import { formatDate, getPosts, postUrl } from '../../lib/posts';
+
+const posts = await getPosts();
+const icon = '/icons/folder.svg';
+---
+
+<Desktop title="My Blog" description={`All posts by ${AUTHOR}, newest first.`} tasks={[{ id: 'blog-window', title: 'My Blog', icon }]}>
+  <XPWindow id="blog-window" title="My Blog" icon={icon} width="780px" height="calc(100% - 48px)">
+    <div slot="chrome">
+      <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
+      <nav class="toolbar" aria-label="Folder">
+        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&larr;</span> Back</a>
+        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&uarr;</span> Desktop</a>
+        <span class="tb-sep" aria-hidden="true"></span>
+        <a class="tb-btn" href="/rss.xml"><img src="/icons/rss.svg" alt="" width="20" height="20" /> Subscribe</a>
+      </nav>
+      <div class="addressbar">
+        <span class="addressbar-label">Address</span>
+        <span class="addressbar-field"><img src={icon} alt="" width="16" height="16" />C:\Documents and Settings\{AUTHOR}\Desktop\My Blog</span>
+      </div>
+    </div>
+
+    <div class="explorer">
+      <div class="task-pane">
+        <section>
+          <h2>Blog Tasks</h2>
+          <ul>
+            <li><a href="/rss.xml"><img src="/icons/rss.svg" alt="" width="16" height="16" /> Subscribe via RSS</a></li>
+            <li><a href="/about/"><img src="/icons/notepad.svg" alt="" width="16" height="16" /> About the author</a></li>
+          </ul>
+        </section>
+        <section>
+          <h2>Details</h2>
+          <p><strong>My Blog</strong><br />File Folder<br />{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+        </section>
+      </div>
+
+      <div class="file-pane">
+        <h1>My Blog</h1>
+        {
+          posts.length === 0 ? (
+            <p class="empty-note">This folder is empty. Add a Markdown file to src/content/posts/.</p>
+          ) : (
+            <ol class="file-list" reversed>
+              {posts.map((post) => (
+                <li>
+                  <img src="/icons/page.svg" alt="" width="40" height="40" />
+                  <a class="file-title" href={postUrl(post)}>
+                    {post.data.title}
+                    {post.data.draft && ' (draft)'}
+                  </a>
+                  <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+                  <p class="file-desc">{post.data.description}</p>
+                </li>
+              ))}
+            </ol>
+          )
+        }
+      </div>
+    </div>
+
+    <div slot="status" class="status-bar">
+      <p class="status-bar-field">{posts.length} object(s)</p>
+      <p class="status-bar-field">My Computer</p>
+    </div>
+  </XPWindow>
+</Desktop>

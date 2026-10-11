@@ -1,0 +1,63 @@
+---
+import '../styles/boot.css';
+
+const today = new Date();
+const biosDate = `${String(today.getUTCMonth() + 1).padStart(2, '0')}/${String(today.getUTCDate()).padStart(2, '0')}/${today.getUTCFullYear()}`;
+
+// The POST sequence, top to bottom. Edit freely.
+//   text     - typed out character by character
+//   result   - printed after a short "detecting..." pause
+//   memory   - counts up to this many KB, then prints "OK"
+//   footer   - reveals the "Press DEL to enter SETUP" bar
+//   cls      - extra TuiCss color classes for the line
+const steps = [
+  { text: 'KM-BX 6.00PG, An Energy Saver Ally', cls: 'white-255-text' },
+  { text: `Copyright (C) 2001-${today.getUTCFullYear()}, kmasouri Software, Inc.` },
+  { text: '' },
+  { text: 'Main Processor : x86 Family 15 Model 2 @ 2400MHz' },
+  { memory: 524288 },
+  { footer: true },
+  { text: '' },
+  { text: 'Detecting IDE Primary Master   ...', result: ' BLOG-HDD 40GB' },
+  { text: 'Detecting IDE Primary Slave    ...', result: ' None' },
+  { text: 'Detecting IDE Secondary Master ...', result: ' CD-ROM 52X' },
+  { text: 'Detecting IDE Secondary Slave  ...', result: ' None' },
+  { text: '' },
+  { text: 'Floppy Drive A: 1.44M, 3.5 in.' },
+  { text: '' },
+  { text: 'Verifying DMI Pool Data ............', result: ' Update Success', cls: 'white-255-text' },
+  { text: 'Boot from ATA HDD0 ...' },
+  { text: "Starting kmasouri's desktop ...", cls: 'yellow-255-text' },
+];
+---
+
+<div id="boot" class="boot black-255 white-168-text" role="dialog" aria-modal="true" aria-label="BIOS boot screen">
+  <div class="boot-head" aria-hidden="true">
+    <div class="boot-logo">
+      <span class="boot-award yellow-255-text">&#9608;&#9608;</span>
+      <span class="white-255-text">KMBIOS Modular BIOS v6.00PG</span>
+    </div>
+    <div class="tui-panel blue-168 white-255-text boot-badge">
+      <div class="tui-panel-header black-255-text">BLOG</div>
+      <div class="tui-panel-content">
+        <span class="yellow-255-text">&#9733;</span> Energy<br />Saver
+      </div>
+    </div>
+  </div>
+
+  <div class="boot-output" data-boot-output aria-hidden="true"></div>
+
+  <div class="boot-foot" data-boot-footer hidden aria-hidden="true">
+    <div class="tui-divider"></div>
+    <p>Press <span class="white-255-text">DEL</span> to enter SETUP, <span class="white-255-text">F8</span> for Boot Menu</p>
+    <p>{biosDate}-i440BX-KM977-2A69KG0BC-00</p>
+  </div>
+
+  <button type="button" class="boot-skip cyan-255-text" data-boot-skip>Press any key or click to skip</button>
+
+  <script type="application/json" id="boot-steps" set:html={JSON.stringify(steps)} />
+</div>
+
+<script>
+  import '../scripts/boot';
+</script>

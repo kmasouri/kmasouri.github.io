@@ -1,0 +1,52 @@
+---
+/**
+ * An XP.css window. One per page; its id matches the taskbar button.
+ *
+ * Slots:
+ *   default  - window content (scrolls inside the window)
+ *   chrome   - menu bar / toolbar / address bar above the content
+ *   status   - status bar below the content
+ */
+interface Props {
+  id: string;
+  title: string;
+  icon: string;
+  /** Preferred width on desktop, e.g. "760px". */
+  width?: string;
+  /** Preferred height on desktop. Defaults to fitting the content. */
+  height?: string;
+  /** Where the close button goes. */
+  closeHref?: string;
+  class?: string;
+}
+
+const { id, title, icon, width = '720px', height = 'auto', closeHref = '/', class: className } = Astro.props;
+---
+
+<section
+  class:list={['window', 'xp-window', className]}
+  id={id}
+  aria-labelledby={`${id}-title`}
+  data-window
+  style={`--win-w: ${width}; --win-h: ${height};`}
+>
+  <div class="title-bar" data-drag-handle>
+    <div class="title-bar-text" id={`${id}-title`}>
+      <img src={icon} alt="" width="16" height="16" />
+      <span>{title}</span>
+    </div>
+    <div class="title-bar-controls">
+      <button type="button" aria-label="Minimize" data-action="minimize"></button>
+      <button type="button" aria-label="Maximize" data-action="maximize"></button>
+      {/* A form so "close" still works with JavaScript disabled. */}
+      <form method="get" action={closeHref} data-close-form>
+        <button type="submit" aria-label="Close"></button>
+      </form>
+    </div>
+  </div>
+  <slot name="chrome" />
+  <div class="window-body xp-window-body" tabindex="0">
+    <slot />
+  </div>
+  <slot name="status" />
+</section>

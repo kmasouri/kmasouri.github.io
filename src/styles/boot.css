@@ -1,0 +1,121 @@
+/*
+ * BIOS boot screen. TuiCss ships global resets (html font, link styles...),
+ * so it is imported into a low-priority cascade layer: its classes still work
+ * on the boot screen, but anything XP.css or global.css sets wins.
+ */
+@import 'tuicss/dist/tuicss.min.css' layer(tui);
+
+.boot {
+  display: none;
+}
+
+html.booting body {
+  overflow: hidden;
+}
+
+html.booting .boot {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  padding: max(16px, 3vh) max(16px, 4vw);
+  font-family: DOS, 'Perfect DOS VGA 437 Win', 'Courier New', monospace;
+  font-size: clamp(11px, 2.4vw, 20px);
+  line-height: 1.3;
+  cursor: default;
+  overflow: hidden;
+  animation: boot-failsafe 0s 15s forwards;
+}
+
+.boot-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1em;
+  margin-bottom: 0.5em;
+}
+
+.boot-logo {
+  display: flex;
+  gap: 0.6em;
+  align-items: center;
+}
+
+.boot-badge {
+  box-shadow: 0.5em 0.5em #000;
+  text-align: center;
+  line-height: 1.15;
+  min-width: 7em;
+}
+
+.boot-badge .tui-panel-content {
+  padding: 0.4em 0.6em;
+}
+
+.boot-output {
+  flex: 1;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.boot-line {
+  min-height: 1.3em;
+}
+
+.boot-foot p {
+  margin: 0.25em 0 0;
+}
+
+.boot-foot .tui-divider {
+  border-color: #a8a8a8;
+  margin-bottom: 0.4em;
+}
+
+#boot .boot-skip {
+  /* reset XP.css button styling */
+  all: unset;
+  align-self: flex-end;
+  margin-top: 0.75em;
+  font: inherit;
+  cursor: pointer;
+  animation: boot-blink 1.1s steps(2, start) infinite;
+}
+
+#boot .boot-skip:focus,
+#boot .boot-skip:active {
+  box-shadow: none;
+}
+
+#boot .boot-skip:focus-visible {
+  outline: 2px dashed currentColor;
+  outline-offset: 4px;
+}
+
+.boot-out {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+@keyframes boot-blink {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Failsafe: if the boot script never loads, get out of the way anyway. */
+@keyframes boot-failsafe {
+  to {
+    visibility: hidden;
+    pointer-events: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #boot .boot-skip {
+    animation: none;
+  }
+  .boot-out {
+    transition: none;
+  }
+}
