@@ -1,5 +1,4 @@
 ---
-import '@fontsource/yellowtail/latin-400.css';
 import '../styles/boot.css';
 
 const today = new Date();
@@ -30,25 +29,17 @@ const steps = [
 <div id="boot" class="boot black-255 white-168-text" role="dialog" aria-modal="true" aria-label="BIOS boot screen">
   <div class="boot-head" aria-hidden="true">
     <div class="boot-title">
-      <svg class="boot-icon" viewBox="0 0 20 24">
-        <circle cx="12" cy="6" r="5.5" fill="#2a3cff" />
-        <path d="M0 13h20l-6 5 3 6-7-4-6 4 2-6z" fill="#2a3cff" />
-      </svg>
+      <img class="boot-icon" src="/boot-icon.svg" alt="" width="56" height="48" />
       <div>
         <div>KMBIOS Modular BIOS v4.60PG, An Energy Saver Ally</div>
         <div>Copyright (C) 1984-98, kmasouri Software, Inc.</div>
       </div>
     </div>
 
-    <svg class="boot-energy" viewBox="0 0 300 145">
-      <g fill="none" stroke="#ffff3c" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
-        <!-- swoosh, left open on the right where the star sits -->
-        <path d="M234 40A122 44 0 1 0 234 84" />
-        <path d="M262 22l9 25h27l-22 16 9 26-23-16-22 16 9-26-22-16h27z" />
-      </g>
-      <text x="124" y="80" text-anchor="middle" style="fill:#ffff3c;font:52px Yellowtail,cursive">kmasouri</text>
-      <text x="150" y="138" textLength="292" style="fill:#3cff3c;font:bold 17px Arial,Helvetica,sans-serif" text-anchor="middle">BLOG POLLUTION PREVENTER</text>
-    </svg>
+    <div class="boot-energy">
+      <img src="/boot-logo.svg" alt="" width="105" height="69" />
+      <span>GREEN BOOT CERTIFIED</span>
+    </div>
   </div>
 
   <div class="boot-output" data-boot-output aria-hidden="true"></div>

@@ -43,9 +43,10 @@ html.booting .boot {
 
 .boot-icon {
   flex: none;
-  width: 1.1em;
-  height: 1.3em;
-  margin-top: 0.3em;
+  /* spans both header lines, like the Award logo */
+  height: 2.6em;
+  width: auto;
+  image-rendering: pixelated;
 }
 
 .boot-energy {
@@ -53,7 +54,25 @@ html.booting .boot {
   top: max(16px, 3vh);
   right: max(16px, 4vw);
   width: var(--boot-logo);
+  text-align: center;
+}
+
+.boot-energy img {
+  display: block;
+  width: 100%;
   height: auto;
+  /* pixel art: scale up without smoothing */
+  image-rendering: pixelated;
+}
+
+.boot-energy span {
+  display: block;
+  margin-top: 0.3em;
+  color: #00ff00;
+  /* same DOS face as the rest of the POST screen, a step smaller */
+  font-size: 0.8em;
+  /* one line on desktop; wraps under the small phone-size logo */
+  text-wrap: balance;
 }
 
 .boot-output {
@@ -68,6 +87,13 @@ html.booting .boot {
 
 .boot-foot p {
   margin: 0;
+}
+
+/* Phones: the footer's long code line would run under the skip button. */
+@media (max-width: 600px) {
+  .boot-foot {
+    margin-bottom: 2em;
+  }
 }
 
 #boot .boot-skip {

@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.4",
-    "@fontsource/yellowtail": "^5.3.0",
     "astro": "^7.3.8",
     "tuicss": "^2.1.2",
     "xp.css": "^0.2.6"
