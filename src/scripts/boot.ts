@@ -1,5 +1,8 @@
 // Fake POST sequence. Only runs when the inline <head> script flagged this
-// visit as a fresh session (html.booting). Any key, click, or tap skips it.
+// visit as a fresh session (html.booting). Any key, click, or tap skips it;
+// DEL (or tapping "DEL") opens the setup screen instead.
+
+import { openSetup } from './bios-setup';
 
 interface Step {
   text?: string;
@@ -31,6 +34,8 @@ function runBoot(boot: HTMLElement) {
   skip.focus({ preventScroll: true });
 
   let finished = false;
+  // In setup: the POST animation stops where it is until setup exits.
+  let halted = false;
   const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, reduceMotion ? 0 : ms));
 
   async function typeInto(el: HTMLElement, text: string) {
@@ -38,7 +43,7 @@ function runBoot(boot: HTMLElement) {
       el.textContent = text;
       return;
     }
-    for (let i = 2; i < text.length + 2 && !finished; i += 2) {
+    for (let i = 2; i < text.length + 2 && !finished && !halted; i += 2) {
       el.textContent = text.slice(0, i);
       await sleep(10);
     }
@@ -47,7 +52,7 @@ function runBoot(boot: HTMLElement) {
   async function memoryTest(el: HTMLElement, total: number) {
     const label = 'Memory Test :  ';
     const frames = reduceMotion ? 1 : 40;
-    for (let f = 1; f <= frames && !finished; f++) {
+    for (let f = 1; f <= frames && !finished && !halted; f++) {
       el.textContent = `${label}${Math.round((total * f) / frames)}K`;
       await sleep(22);
     }
@@ -56,7 +61,7 @@ function runBoot(boot: HTMLElement) {
 
   async function play() {
     for (const step of steps) {
-      if (finished) return;
+      if (finished || halted) return;
       if (step.footer) {
         footer.hidden = false;
         continue;
@@ -80,7 +85,20 @@ function runBoot(boot: HTMLElement) {
     }
     // Let the final screen sit for a beat (a little longer if nothing animated).
     await new Promise((resolve) => setTimeout(resolve, reduceMotion ? 1200 : 700));
-    finish();
+    if (!halted) finish();
+  }
+
+  function enterSetup() {
+    if (finished || halted) return;
+    halted = true;
+    window.removeEventListener('keydown', onKey, true);
+    boot.removeEventListener('pointerdown', onPointer);
+    boot.classList.add('in-setup');
+    openSetup(
+      boot,
+      { author: boot.dataset.author ?? '', posts: Number(boot.dataset.posts ?? 0), site: location.host },
+      finish,
+    );
   }
 
   function finish() {
@@ -108,23 +126,29 @@ function runBoot(boot: HTMLElement) {
   function onKey(event: KeyboardEvent) {
     if (event.key === 'Tab' || event.key === 'Shift') return; // let people reach the skip button
     event.preventDefault();
-    if (event.key === 'Delete' && !finished) {
-      const line = document.createElement('div');
-      line.className = 'boot-line red-255-text';
-      line.textContent = 'Entering SETUP ... SETUP is password protected. Booting anyway.';
-      output.append(line);
-      window.removeEventListener('keydown', onKey, true);
-      setTimeout(finish, reduceMotion ? 1200 : 900);
+    if (event.key === 'Delete') {
+      enterSetup();
       return;
     }
     finish();
   }
 
+  // Tapping "DEL" in the footer opens setup (phones have no Delete key);
+  // a click anywhere else skips the boot.
+  function onPointer(event: PointerEvent) {
+    if ((event.target as HTMLElement).closest('[data-boot-setup]')) {
+      event.preventDefault();
+      enterSetup();
+    } else {
+      finish();
+    }
+  }
+
   window.addEventListener('keydown', onKey, true);
-  boot.addEventListener('pointerdown', finish);
+  boot.addEventListener('pointerdown', onPointer);
   skip.addEventListener('click', finish);
   boot.addEventListener('animationend', (event) => {
-    if (event.animationName === 'boot-failsafe') finish();
+    if (event.animationName === 'boot-failsafe' && !halted) finish();
   });
   play();
 }

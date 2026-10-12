@@ -146,3 +146,200 @@ html.booting .boot {
     transition: none;
   }
 }
+
+/* "DEL" in the footer doubles as a tap target for setup on phones. */
+#boot .boot-del {
+  all: unset;
+  font: inherit;
+  cursor: pointer;
+}
+
+/* ------------------------------------------------------------ setup screen */
+/* Colours are TuiCss's palette (blue-168, white-168, white-255, black). */
+
+html.booting .boot.in-setup {
+  animation: none;
+}
+
+.boot.in-setup .boot-skip {
+  display: none;
+}
+
+.setup {
+  --setup-blue: #0000a8;
+  --setup-grey: #a8a8a8;
+  --setup-white: #fff;
+  --setup-black: #000;
+
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  background: var(--setup-grey);
+  color: var(--setup-black);
+  font-size: clamp(12px, 1.8vw, 18px);
+  line-height: 1.4;
+  outline: none;
+}
+
+.setup-title,
+.setup-foot {
+  padding: 0.2em 1ch;
+  background: var(--setup-blue);
+  color: var(--setup-grey);
+  text-align: center;
+}
+
+.setup-tabs {
+  display: flex;
+  padding: 0 1ch;
+  overflow-x: auto;
+  background: var(--setup-blue);
+}
+
+#boot .setup-tab {
+  all: unset;
+  padding: 0.1em 1ch;
+  color: var(--setup-grey);
+  font: inherit;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+#boot .setup-tab.is-active {
+  background: var(--setup-grey);
+  color: var(--setup-blue);
+}
+
+.setup-main {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  min-height: 0;
+  margin: 0.6em 1ch;
+}
+
+.setup-panel,
+.setup-side {
+  min-height: 0;
+  overflow: auto;
+  padding: 0.5em 1.5ch;
+  border: 3px double var(--setup-blue);
+}
+
+.setup-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1em;
+  border-left: 0;
+  color: var(--setup-blue);
+}
+
+.setup-help {
+  margin: 0;
+}
+
+.setup-keys {
+  margin: 0;
+  padding: 0.5em 0 0;
+  border-top: 1px solid var(--setup-blue);
+  list-style: none;
+}
+
+.setup-keys li {
+  cursor: pointer;
+}
+
+.setup-crumbs {
+  margin-bottom: 0.5em;
+  color: var(--setup-blue);
+}
+
+.setup-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.setup-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 2ch;
+}
+
+.setup-row.is-selectable {
+  color: var(--setup-blue);
+  cursor: pointer;
+}
+
+.setup-row.is-selected {
+  color: var(--setup-white);
+}
+
+.setup-gap {
+  height: 1.4em;
+}
+
+.setup-heading {
+  margin-top: 0.2em;
+}
+
+.setup-popup {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  width: min(48ch, calc(100% - 32px));
+  padding: 0.5em 1.5ch 0.8em;
+  border: 3px double var(--setup-white);
+  background: var(--setup-blue);
+  color: var(--setup-white);
+  text-align: center;
+  box-shadow: 1ch 0.6em 0 var(--setup-black);
+  transform: translate(-50%, -50%);
+}
+
+.setup-popup-title {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--setup-grey);
+}
+
+.setup-popup p {
+  margin: 0.6em 0;
+}
+
+.setup-popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 3ch;
+}
+
+#boot .setup-popup button {
+  all: unset;
+  padding: 0 1ch;
+  color: var(--setup-grey);
+  font: inherit;
+  cursor: pointer;
+}
+
+#boot .setup-popup button.is-focus {
+  background: var(--setup-grey);
+  color: var(--setup-blue);
+}
+
+/* Phones: help panel moves under the settings */
+@media (max-width: 600px) {
+  .setup-main {
+    grid-template-columns: 1fr;
+    grid-template-rows: minmax(0, 1fr) auto;
+  }
+
+  .setup-side {
+    border-left: 3px double var(--setup-blue);
+    border-top: 0;
+  }
+
+  .setup-row {
+    gap: 1ch;
+  }
+}
