@@ -2,31 +2,9 @@
 import Desktop from '../layouts/Desktop.astro';
 import BootScreen from '../components/BootScreen.astro';
 import { SITE_TITLE } from '../consts';
-import { getPosts, postUrl } from '../lib/posts';
-
-const latest = (await getPosts()).slice(0, 3);
 ---
 
 <Desktop boot>
   <BootScreen slot="boot" />
   <h1 class="sr-only">{SITE_TITLE}</h1>
-  <aside class="balloon" data-balloon aria-labelledby="welcome-title">
-    <button type="button" class="balloon-close" data-balloon-close aria-label="Dismiss welcome message">&times;</button>
-    <h2 id="welcome-title"><img src="/icons/notepad.png" alt="" width="16" height="16" /> Welcome to {SITE_TITLE}</h2>
-    <p>Open <a href="/posts/">My Blog</a> to read posts, or click <strong>start</strong> to look around.</p>
-    {
-      latest.length > 0 && (
-        <>
-          <p>Latest:</p>
-          <ul>
-            {latest.map((post) => (
-              <li>
-                <a href={postUrl(post)}>{post.data.title}</a>
-              </li>
-            ))}
-          </ul>
-        </>
-      )
-    }
-  </aside>
 </Desktop>

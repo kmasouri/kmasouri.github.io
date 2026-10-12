@@ -1,5 +1,5 @@
 ---
-import { AUTHOR, EMAIL, GITHUB_URL } from '../consts';
+import { AUTHOR, EMAIL, GITHUB_URL, SITE_TITLE } from '../consts';
 import { getPosts, postUrl } from '../lib/posts';
 
 export interface Task {
@@ -11,10 +11,13 @@ export interface Task {
 
 interface Props {
   tasks: Task[];
+  /** Pop the welcome balloon up on load (the home page). */
+  welcome?: boolean;
 }
 
-const { tasks } = Astro.props;
+const { tasks, welcome = false } = Astro.props;
 const recent = (await getPosts()).slice(0, 5);
+const latest = recent.slice(0, 3);
 ---
 
 <footer class="taskbar" aria-label="Taskbar">
@@ -112,6 +115,32 @@ const recent = (await getPosts()).slice(0, 5);
   </ul>
 
   <div class="tray">
+    <button type="button" class="tray-icon" data-balloon-toggle aria-controls="welcome-balloon" aria-expanded={String(welcome)} title="Welcome">
+      <img src="/icons/tray-info.png" alt="Welcome message" width="16" height="16" />
+    </button>
+    <span class="tray-icon" title="Local Area Connection: Connected"><img src="/icons/tray-network.png" alt="Network: connected" width="16" height="16" /></span>
+    <span class="tray-icon" title="Volume"><img src="/icons/tray-volume.png" alt="Volume" width="16" height="16" /></span>
     <time class="clock" id="clock"></time>
   </div>
+
+  <!-- Welcome balloon: comes from the info icon in the tray. -->
+  <aside class="balloon" id="welcome-balloon" data-balloon aria-labelledby="welcome-title" hidden={!welcome}>
+    <button type="button" class="balloon-close" data-balloon-close aria-label="Dismiss welcome message">&times;</button>
+    <h2 id="welcome-title"><img src="/icons/tray-info.png" alt="" width="16" height="16" /> Welcome to {SITE_TITLE}</h2>
+    <p>Open <a href="/posts/">My Blog</a> to read posts, or click <strong>start</strong> to look around.</p>
+    {
+      latest.length > 0 && (
+        <>
+          <p>Latest:</p>
+          <ul>
+            {latest.map((post) => (
+              <li>
+                <a href={postUrl(post)}>{post.data.title}</a>
+              </li>
+            ))}
+          </ul>
+        </>
+      )
+    }
+  </aside>
 </footer>

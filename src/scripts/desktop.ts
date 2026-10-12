@@ -565,8 +565,55 @@ function initExtras() {
     });
   });
 
-  // Dismissable balloon tips.
-  document.querySelectorAll<HTMLElement>('[data-balloon]').forEach((balloon) => {
-    balloon.querySelector('[data-balloon-close]')?.addEventListener('click', () => balloon.remove());
-  });
+  initBalloon();
+}
+
+// --- Welcome balloon --------------------------------------------------------------
+
+// The balloon belongs to the info icon in the tray: it pops up on the home page,
+// its tail points at that icon, and clicking the icon shows or hides it.
+// Once closed it stays closed for the rest of the visit.
+const BALLOON_KEY = 'xp:welcome-closed';
+
+function placeBalloon() {
+  const balloon = document.querySelector<HTMLElement>('[data-balloon]');
+  const icon = document.querySelector<HTMLElement>('[data-balloon-toggle]');
+  if (!balloon || !icon || balloon.hidden) return;
+  const r = icon.getBoundingClientRect();
+  const center = r.left + r.width / 2;
+  const tailToEdge = 43; // ::after sits 36px from the right and is 14px wide
+  const right = Math.max(4, window.innerWidth - center - tailToEdge);
+  balloon.style.right = `${right}px`;
+  balloon.style.setProperty('--tail', `${window.innerWidth - right - center - 7}px`);
+}
+window.addEventListener('resize', placeBalloon);
+
+function initBalloon() {
+  const balloon = document.querySelector<HTMLElement>('[data-balloon]');
+  const icon = document.querySelector<HTMLButtonElement>('[data-balloon-toggle]');
+  if (!balloon || !icon) return;
+  let closed = false;
+  try {
+    closed = sessionStorage.getItem(BALLOON_KEY) === '1';
+  } catch {
+    /* ignore */
+  }
+  const show = (open: boolean) => {
+    balloon.hidden = !open;
+    icon.setAttribute('aria-expanded', String(open));
+    try {
+      if (open) sessionStorage.removeItem(BALLOON_KEY);
+      else sessionStorage.setItem(BALLOON_KEY, '1');
+    } catch {
+      /* ignore */
+    }
+    placeBalloon();
+  };
+  if (closed && !balloon.hidden) {
+    balloon.hidden = true;
+    icon.setAttribute('aria-expanded', 'false');
+  }
+  placeBalloon();
+  icon.addEventListener('click', () => show(balloon.hidden));
+  balloon.querySelector('[data-balloon-close]')?.addEventListener('click', () => show(false));
 }

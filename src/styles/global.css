@@ -201,9 +201,10 @@ img {
 
 /* Balloon tip (home page welcome) */
 .balloon {
-  position: absolute;
+  position: fixed;
+  z-index: 1;
   right: 10px;
-  bottom: 14px;
+  bottom: calc(var(--taskbar-h) + 10px);
   width: min(320px, calc(100vw - 20px));
   padding: 10px 12px 12px;
   background: #ffffe1;
@@ -214,10 +215,11 @@ img {
   line-height: 1.45;
 }
 
+/* the tail points at the tray icon (desktop.ts sets --tail to line it up) */
 .balloon::after {
   content: '';
   position: absolute;
-  right: 36px;
+  right: var(--tail, 36px);
   bottom: -14px;
   border: 7px solid transparent;
   border-top-color: #ffffe1;
@@ -265,6 +267,10 @@ img {
 }
 
 html:not(.js) .balloon-close {
+  display: none;
+}
+
+.balloon[hidden] {
   display: none;
 }
 
@@ -393,7 +399,7 @@ html:not(.js) .balloon-close {
 .tray {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   padding: 0 12px 0 10px;
   border-left: 1px solid #1042af;
   background: linear-gradient(
@@ -415,6 +421,36 @@ html:not(.js) .balloon-close {
   color: #fff;
   font-size: 11px;
   white-space: nowrap;
+}
+
+.tray-icon {
+  display: flex;
+  flex: none;
+}
+
+.tray-icon img {
+  width: 16px;
+  height: 16px;
+}
+
+.taskbar button.tray-icon {
+  /* undo XP.css button chrome */
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.taskbar button.tray-icon:focus-visible {
+  outline: 1px dotted #fff;
+  outline-offset: 1px;
+}
+
+.tray .clock {
+  margin-left: 4px;
 }
 
 /* ------------------------------------------------------------- start menu */
@@ -1549,9 +1585,6 @@ html:not(.js) .title-bar-controls [data-action] {
     font-size: 12px;
   }
 
-  .balloon {
-    bottom: 12px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
