@@ -58,7 +58,7 @@ function boot() {
 Put images in `src/assets/blog/` and link them with a relative path. Always add
 alt text in the square brackets. It's what screen readers read aloud.
 
-![A green hill under a blue sky with soft white clouds](../../assets/blog/hills.svg)
+![A green hill with a golden wheat field on top, under a clear blue sky](../../assets/blog/hills.jpg)
 
 ---
 
