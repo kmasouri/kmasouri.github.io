@@ -1,6 +1,7 @@
 ---
 import Desktop from '../../layouts/Desktop.astro';
 import XPWindow from '../../components/XPWindow.astro';
+import ExplorerToolbar from '../../components/ExplorerToolbar.astro';
 import { AUTHOR } from '../../consts';
 import { formatDate, getPosts, postUrl } from '../../lib/posts';
 
@@ -12,10 +13,7 @@ const icon = '/icons/folder.png';
   <XPWindow id="blog-window" title="My Blog" icon={icon} width="780px" height="calc(100% - 48px)">
     <div slot="chrome">
       <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
-      <nav class="toolbar" aria-label="Folder">
-        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&larr;</span> Back</a>
-        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&uarr;</span> Desktop</a>
-      </nav>
+      <ExplorerToolbar back="/" up="/" folders />
       <div class="addressbar">
         <span class="addressbar-label">Address</span>
         <span class="addressbar-field"><img src={icon} alt="" width="16" height="16" />C:\Documents and Settings\{AUTHOR}\Desktop\My Blog</span>

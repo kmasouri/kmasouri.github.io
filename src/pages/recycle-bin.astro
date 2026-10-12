@@ -1,6 +1,7 @@
 ---
 import Desktop from '../layouts/Desktop.astro';
 import XPWindow from '../components/XPWindow.astro';
+import ExplorerToolbar from '../components/ExplorerToolbar.astro';
 
 const icon = '/icons/recycle-bin.png';
 const items = [
@@ -15,11 +16,10 @@ const items = [
   <XPWindow id="bin-window" title="Recycle Bin" icon={icon} width="620px">
     <div slot="chrome">
       <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
-      <div class="toolbar">
-        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&larr;</span> Back</a>
+      <ExplorerToolbar back="/" up="/">
         <span class="tb-sep" aria-hidden="true"></span>
         <button type="button" data-empty-bin>Empty Recycle Bin</button>
-      </div>
+      </ExplorerToolbar>
     </div>
     <div class="file-pane">
       <h1>Recycle Bin</h1>

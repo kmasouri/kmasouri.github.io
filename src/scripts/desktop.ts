@@ -506,6 +506,15 @@ function initExtras() {
     input.addEventListener('focus', () => input.select());
   });
 
+  // Explorer's Folders button: hide or show the task pane.
+  document.querySelectorAll<HTMLButtonElement>('[data-toggle-tasks]').forEach((button) => {
+    const explorer = button.closest('.xp-window')?.querySelector('.explorer');
+    button.addEventListener('click', () => {
+      const hidden = explorer?.classList.toggle('hide-tasks') ?? false;
+      button.setAttribute('aria-pressed', String(hidden));
+    });
+  });
+
   // Dismissable balloon tips.
   document.querySelectorAll<HTMLElement>('[data-balloon]').forEach((balloon) => {
     balloon.querySelector('[data-balloon-close]')?.addEventListener('click', () => balloon.remove());

@@ -827,6 +827,102 @@ html:not(.js) .title-bar-controls [data-action] {
   line-height: 1;
 }
 
+/* Explorer's standard buttons (ExplorerToolbar.astro) */
+.xp-toolbar {
+  gap: 1px;
+  padding: 2px 4px;
+}
+
+.xp-toolbar .tb-btn {
+  min-height: 32px;
+  padding: 2px 6px 2px 3px;
+  gap: 5px;
+}
+
+/* XP.css styles every <button>; make the Folders toggle look like the rest */
+.xp-toolbar button.tb-btn {
+  min-width: 0;
+  margin: 0;
+  background: none;
+  box-shadow: none;
+  font: inherit;
+  font-size: 12px;
+}
+
+.xp-toolbar .tb-btn img {
+  width: 24px;
+  height: 24px;
+}
+
+.xp-toolbar .tb-btn.is-deco,
+.xp-toolbar .tb-btn.is-off {
+  pointer-events: none;
+}
+
+.xp-toolbar .tb-btn.is-off {
+  filter: grayscale(1) opacity(0.55);
+}
+
+.xp-toolbar button.tb-btn[aria-pressed='true'] {
+  border-color: #b9b6a9;
+  background: #e3e0d3;
+  box-shadow: inset 1px 1px 2px rgb(0 0 0 / 0.18);
+}
+
+.tb-nav {
+  width: 26px;
+  height: 26px;
+  flex: none;
+}
+
+.tb-nav circle {
+  fill: #2f9e44;
+  stroke: #1b6b2b;
+  stroke-width: 1;
+}
+
+.tb-nav path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.tb-views {
+  width: 24px;
+  height: 24px;
+}
+
+.tb-views > rect {
+  fill: #fff;
+  stroke: #2a5bc4;
+  stroke-width: 1.2;
+}
+
+.tb-views > path {
+  stroke: #2a5bc4;
+  stroke-width: 2.5;
+}
+
+/* the small dropdown arrow beside Back, Forward and Views */
+.tb-caret {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 3px 3px 0;
+  border-color: #000 transparent transparent;
+}
+
+/* Folders toggled on: hide the task pane, like XP swapping it for the tree */
+.explorer.hide-tasks {
+  grid-template-columns: 1fr;
+}
+
+.explorer.hide-tasks .task-pane {
+  display: none;
+}
+
 .tb-sep {
   width: 1px;
   align-self: stretch;
