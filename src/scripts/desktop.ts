@@ -17,6 +17,7 @@ document.addEventListener('astro:before-swap', (event) => {
   const html = event.newDocument.documentElement;
   html.classList.add('js');
   html.classList.toggle('welcome-closed', document.documentElement.classList.contains('welcome-closed'));
+  html.classList.remove('icons-pending');
 });
 document.addEventListener('astro:page-load', initPage);
 
@@ -412,7 +413,11 @@ function saveIconCells(cells: Record<string, Cell>) {
 // them up the first time they appear and does nothing after that.
 function initDesktopIcons() {
   const iconList = document.querySelector<HTMLElement>('.desktop-icons ul');
-  if (!iconList || iconList.dataset.ready) return;
+  if (!iconList || iconList.dataset.ready) {
+    // Already placed on an earlier page: make sure nothing is holding them back.
+    document.documentElement.classList.remove('icons-pending');
+    return;
+  }
   iconList.dataset.ready = '1';
 
   const slots = [...iconList.querySelectorAll<HTMLElement>(':scope > li')];

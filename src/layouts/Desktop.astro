@@ -73,7 +73,13 @@ const ogImage = new URL('/og.png', Astro.site);
         if (sessionStorage.getItem('xp:welcome-closed') === '1') {
           document.documentElement.classList.add('welcome-closed');
         }
-        if (matchMedia('(min-width: 768px)').matches && localStorage.getItem('xp:icon-positions')) {
+        // (Only on a real page load. On in-place navigation the icons are
+        // already on screen and placed, so hiding them would just blink them.)
+        if (
+          matchMedia('(min-width: 768px)').matches &&
+          localStorage.getItem('xp:icon-positions') &&
+          !document.querySelector('.desktop-icons ul[data-ready]')
+        ) {
           document.documentElement.classList.add('icons-pending');
         }
       } catch (e) {
