@@ -23,7 +23,7 @@ const { post, newer, older } = Astro.props;
 const { Content } = await render(post);
 const { title, description, date, tags } = post.data;
 const url = new URL(postUrl(post), Astro.site).href;
-const icon = '/icons/page.svg';
+const icon = '/icons/page.png';
 ---
 
 <Desktop

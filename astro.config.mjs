@@ -10,7 +10,7 @@ export default defineConfig({
   trailingSlash: 'always',
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/recycle-bin/'),
+      filter: (page) => !page.includes('/recycle-bin/') && !page.includes('/welcome/'),
     }),
   ],
   vite: {

@@ -29,14 +29,16 @@ startMenu?.addEventListener('toggle', (event) => {
   if (open) startMenu.querySelector<HTMLElement>('a')?.focus();
 });
 
-// "Restart" replays the boot sequence.
-document.querySelector('[data-restart]')?.addEventListener('click', () => {
-  try {
-    sessionStorage.removeItem('xp:booted');
-  } catch {
-    /* ignore */
-  }
-});
+// "Turn Off Computer" replays the boot sequence.
+document.querySelectorAll('[data-restart]').forEach((link) =>
+  link.addEventListener('click', () => {
+    try {
+      sessionStorage.removeItem('xp:booted');
+    } catch {
+      /* ignore */
+    }
+  }),
+);
 
 // --- Windows -----------------------------------------------------------------
 

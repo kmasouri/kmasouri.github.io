@@ -5,7 +5,7 @@ import { AUTHOR } from '../../consts';
 import { formatDate, getPosts, postUrl } from '../../lib/posts';
 
 const posts = await getPosts();
-const icon = '/icons/folder.svg';
+const icon = '/icons/folder.png';
 ---
 
 <Desktop title="My Blog" description={`All posts by ${AUTHOR}, newest first.`} tasks={[{ id: 'blog-window', title: 'My Blog', icon }]}>
@@ -27,7 +27,7 @@ const icon = '/icons/folder.svg';
         <section>
           <h2>Blog Tasks</h2>
           <ul>
-            <li><a href="/about/"><img src="/icons/notepad.svg" alt="" width="16" height="16" /> About the author</a></li>
+            <li><a href="/about/"><img src="/icons/notepad.png" alt="" width="16" height="16" /> About the author</a></li>
           </ul>
         </section>
         <section>
@@ -45,7 +45,7 @@ const icon = '/icons/folder.svg';
             <ol class="file-list" reversed>
               {posts.map((post) => (
                 <li>
-                  <img src="/icons/page.svg" alt="" width="40" height="40" />
+                  <img src="/icons/page.png" alt="" width="40" height="40" />
                   <a class="file-title" href={postUrl(post)}>
                     {post.data.title}
                     {post.data.draft && ' (draft)'}

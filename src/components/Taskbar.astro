@@ -25,44 +25,48 @@ const recent = (await getPosts()).slice(0, 5);
 
   <div id="start-menu" class="start-menu" popover>
     <div class="start-header">
-      <img src="/icons/user.svg" alt="" width="42" height="42" />
+      <img src="/icons/user.svg" alt="" width="48" height="48" />
       <span>{AUTHOR}</span>
     </div>
     <nav class="start-body" aria-label="Start menu">
       <div class="start-left">
         <ul>
-          <li>
-            <a href="/posts/"><img src="/icons/folder.svg" alt="" width="32" height="32" /><span><strong>My Blog</strong><small>All posts</small></span></a>
-          </li>
-          <li>
-            <a href="/about/"><img src="/icons/notepad.svg" alt="" width="32" height="32" /><span><strong>About Me</strong><small>about.txt</small></span></a>
-          </li>
+          <li><a href="/posts/"><img src="/icons/folder.png" alt="" width="32" height="32" /><span>My Blog</span></a></li>
+          <li><a href="/about/"><img src="/icons/notepad.png" alt="" width="32" height="32" /><span>About Me</span></a></li>
         </ul>
         {
           recent.length > 0 && (
             <>
-              <h2 class="start-section">Recent posts</h2>
-              <ul class="start-recent">
+              <hr class="start-sep" />
+              <ul aria-label="Recent posts">
                 {recent.map((post) => (
                   <li>
-                    <a href={postUrl(post)}><img src="/icons/page.svg" alt="" width="24" height="24" /><span>{post.data.title}</span></a>
+                    <a href={postUrl(post)}><img src="/icons/page.png" alt="" width="32" height="32" /><span>{post.data.title}</span></a>
                   </li>
                 ))}
               </ul>
             </>
           )
         }
+        <div class="start-all">
+          <hr class="start-sep" />
+          <a href="/posts/"><span>All Posts</span><span class="start-arrow" aria-hidden="true"></span></a>
+        </div>
       </div>
       <div class="start-right">
         <ul>
-          <li><a href={GITHUB_URL} rel="me noopener"><img src="/icons/globe.svg" alt="" width="24" height="24" /><span>GitHub</span></a></li>
-          <li><a href={`mailto:${EMAIL}`}><img src="/icons/mail.svg" alt="" width="24" height="24" /><span>E-mail me</span></a></li>
-          <li><a href="/recycle-bin/"><img src="/icons/recycle-bin.svg" alt="" width="24" height="24" /><span>Recycle Bin</span></a></li>
+          <li><a href={GITHUB_URL} rel="me noopener"><img src="/icons/globe.png" alt="" width="24" height="24" /><span>GitHub</span></a></li>
+          <li><a href={`mailto:${EMAIL}`}><img src="/icons/mail.png" alt="" width="24" height="24" /><span>E-mail Me</span></a></li>
+        </ul>
+        <hr class="start-sep" />
+        <ul>
+          <li><a href="/recycle-bin/"><img src="/icons/recycle-bin.png" alt="" width="24" height="24" /><span>Recycle Bin</span></a></li>
         </ul>
       </div>
     </nav>
     <div class="start-footer">
-      <a href="/" data-restart><img src="/icons/power.svg" alt="" width="22" height="22" /><span>Restart</span></a>
+      <a href="/welcome/"><img src="/icons/log-off.png" alt="" width="24" height="24" /><span>Log Off</span></a>
+      <a href="/" data-restart><img src="/icons/power.png" alt="" width="24" height="24" /><span>Turn Off Computer</span></a>
     </div>
   </div>
 

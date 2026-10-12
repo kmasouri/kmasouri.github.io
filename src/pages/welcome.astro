@@ -1,0 +1,266 @@
+---
+// The "Log Off" screen: XP's Welcome screen. Clicking the user logs back on
+// to the desktop (no BIOS boot); "Turn off computer" replays the boot.
+import { AUTHOR, SITE_TITLE } from '../consts';
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{`Welcome | ${SITE_TITLE}`}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#00309c" />
+  </head>
+  <body>
+    <div class="welcome">
+      <header class="welcome-top"></header>
+
+      <main class="welcome-main">
+        <section class="welcome-brand">
+          <div class="welcome-logo" aria-hidden="true">
+            <img src="/icons/start.svg" alt="" width="72" height="72" />
+            <span class="welcome-word">{AUTHOR}<sup>blog</sup></span>
+          </div>
+          <h1>To begin, click your user name</h1>
+        </section>
+
+        <div class="welcome-divider" aria-hidden="true"></div>
+
+        <ul class="welcome-users" aria-label="Users">
+          <li>
+            <a href="/">
+              <img src="/icons/user.svg" alt="" width="48" height="48" />
+              <span>{AUTHOR}</span>
+            </a>
+          </li>
+        </ul>
+      </main>
+
+      <footer class="welcome-bottom">
+        <a class="welcome-off" href="/" data-restart>
+          <img src="/icons/power.png" alt="" width="22" height="22" />
+          <span>Turn off computer</span>
+        </a>
+        <p>After you log on, you can read the blog.<br />Just open My Blog on the desktop.</p>
+      </footer>
+    </div>
+
+    <script>
+      // "Turn off computer" powers back on through the BIOS boot.
+      document.querySelector('[data-restart]')?.addEventListener('click', () => {
+        try {
+          sessionStorage.removeItem('xp:booted');
+        } catch {
+          /* ignore */
+        }
+      });
+    </script>
+
+    <style>
+      :root {
+        --wel-dark: #00309c;
+        --wel-mid: #5a7edc;
+        --wel-glow: #9fb8f0;
+        --wel-text: #fff;
+        --wel-hint: #d6e2ff;
+        color-scheme: light;
+      }
+
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        background: var(--wel-dark);
+        color: var(--wel-text);
+        font-family: Tahoma, 'Segoe UI', Verdana, sans-serif;
+      }
+
+      .welcome {
+        display: grid;
+        grid-template-rows: 12vh 1fr 12vh;
+        min-height: 100%;
+      }
+
+      .welcome-top {
+        background: var(--wel-dark);
+        border-bottom: 2px solid;
+        border-image: linear-gradient(90deg, #00309c, #a6bdf3 50%, #00309c) 1;
+      }
+
+      .welcome-main {
+        display: grid;
+        grid-template-columns: 1fr 2px 1fr;
+        align-items: center;
+        background: radial-gradient(circle at 8% 4%, var(--wel-glow) 0, transparent 38%), var(--wel-mid);
+      }
+
+      .welcome-brand {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 18px;
+        padding-inline: 16px 36px;
+      }
+
+      .welcome-logo {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        line-height: 1;
+      }
+
+      .welcome-logo img {
+        margin-right: 18px;
+        margin-bottom: -6px;
+      }
+
+      .welcome-word {
+        font: italic 700 clamp(26px, 4vw, 40px) 'Franklin Gothic Medium', 'Franklin Gothic', 'Trebuchet MS', sans-serif;
+        letter-spacing: -0.02em;
+        text-shadow: 1px 1px 2px rgb(0 0 0 / 0.35);
+      }
+
+      .welcome-word sup {
+        margin-left: 2px;
+        color: #f78a2a;
+        font-size: 0.45em;
+        font-style: normal;
+        vertical-align: 1.1em;
+      }
+
+      .welcome-brand h1 {
+        margin: 0;
+        font-size: clamp(14px, 1.6vw, 18px);
+        font-weight: 400;
+        text-align: right;
+        text-wrap: balance;
+      }
+
+      /* XP's divider fades out at both ends */
+      .welcome-divider {
+        align-self: stretch;
+        margin-block: 6vh;
+        background: linear-gradient(180deg, transparent, rgb(255 255 255 / 0.55) 30%, rgb(255 255 255 / 0.55) 70%, transparent);
+      }
+
+      .welcome-users {
+        list-style: none;
+        margin: 0;
+        padding-inline: 32px 16px;
+      }
+
+      .welcome-users a {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 6px 14px 6px 6px;
+        border-radius: 8px;
+        color: var(--wel-text);
+        font: 400 clamp(16px, 1.8vw, 20px) 'Franklin Gothic Medium', 'Franklin Gothic', 'Trebuchet MS', sans-serif;
+        text-decoration: none;
+      }
+
+      .welcome-users img {
+        border: 2px solid #fff;
+        border-radius: 4px;
+        background: #fff;
+        box-shadow: 0 1px 3px rgb(0 0 0 / 0.4);
+      }
+
+      /* XP highlights the tile under the pointer and rings the picture in gold */
+      .welcome-users a:hover,
+      .welcome-users a:focus-visible {
+        background: linear-gradient(90deg, rgb(0 48 156 / 0.55), rgb(0 48 156 / 0));
+        outline: none;
+      }
+
+      .welcome-users a:hover img,
+      .welcome-users a:focus-visible img {
+        border-color: #ffc93c;
+      }
+
+      .welcome-bottom {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding-inline: 16px;
+        background: var(--wel-dark);
+        border-top: 2px solid;
+        border-image: linear-gradient(90deg, #00309c, #f78a2a 30%, #f78a2a 70%, #00309c) 1;
+      }
+
+      .welcome-off {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 6px;
+        border-radius: 4px;
+        color: var(--wel-text);
+        font-size: clamp(14px, 1.5vw, 17px);
+        text-decoration: none;
+      }
+
+      .welcome-off:hover,
+      .welcome-off:focus-visible {
+        background: rgb(255 255 255 / 0.15);
+        outline: none;
+      }
+
+      .welcome-bottom p {
+        margin: 0;
+        color: var(--wel-hint);
+        font-size: 11px;
+        line-height: 1.35;
+        text-align: right;
+      }
+
+      /* Phones: stack the brand above the user list */
+      @media (max-width: 600px) {
+        .welcome-main {
+          grid-template-columns: 1fr;
+          grid-template-rows: auto 2px auto;
+          align-content: center;
+          gap: 20px;
+        }
+
+        .welcome-brand,
+        .welcome-logo {
+          align-items: center;
+        }
+
+        .welcome-brand {
+          padding-inline: 16px;
+        }
+
+        .welcome-brand h1 {
+          text-align: center;
+        }
+
+        .welcome-logo img {
+          margin-right: 0;
+        }
+
+        .welcome-divider {
+          margin: 0 16px;
+          background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55) 30%, rgb(255 255 255 / 0.55) 70%, transparent);
+        }
+
+        .welcome-users {
+          justify-self: center;
+          padding: 0;
+        }
+
+        .welcome-bottom p {
+          display: none;
+        }
+      }
+    </style>
+  </body>
+</html>
