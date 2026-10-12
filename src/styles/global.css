@@ -473,6 +473,49 @@ html.icons-pending .desktop-icons {
   margin-left: 4px;
 }
 
+.taskbar button.tray-icon.is-muted img {
+  filter: grayscale(1) brightness(0.78);
+  opacity: 0.8;
+}
+
+.volume-control {
+  position: fixed;
+  inset: auto 38px var(--taskbar-h) auto;
+  width: 150px;
+  margin: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 0;
+  overflow: clip;
+  color: #000;
+  text-align: center;
+}
+
+.volume-control::backdrop {
+  background: transparent;
+}
+
+.volume-control-body {
+  margin: 8px;
+}
+
+.volume-title {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.volume-slider-wrap {
+  display: grid;
+  place-items: center;
+  height: 152px;
+}
+
+.volume-mute {
+  width: max-content;
+  margin: 7px auto 0;
+}
+
 /* ------------------------------------------------------------- start menu */
 
 .start-menu {

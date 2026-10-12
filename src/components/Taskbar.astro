@@ -34,6 +34,7 @@ const latest = recent.slice(0, 3);
     <nav class="start-body" aria-label="Start menu">
       <div class="start-left">
         <ul>
+          <li><a href="/keygen/"><img src="/icons/keygen.png" alt="" width="32" height="32" /><span>keygen.exe</span></a></li>
           <li><a href="/posts/"><img src="/icons/folder.png" alt="" width="32" height="32" /><span>My Blog</span></a></li>
           <li><a href="/about/"><img src="/icons/notepad.png" alt="" width="32" height="32" /><span>About Me</span></a></li>
         </ul>
@@ -119,9 +120,31 @@ const latest = recent.slice(0, 3);
       <img src="/icons/tray-info.png" alt="Welcome message" width="16" height="16" />
     </button>
     <span class="tray-icon" title="Local Area Connection: Connected"><img src="/icons/tray-network.png" alt="Network: connected" width="16" height="16" /></span>
-    <span class="tray-icon" title="Volume"><img src="/icons/tray-volume.png" alt="Volume" width="16" height="16" /></span>
+    <button
+      type="button"
+      class="tray-icon"
+      title="Volume"
+      aria-label="Open volume control"
+      popovertarget="volume-control"
+      data-volume-toggle
+    ><img src="/icons/tray-volume.png" alt="" width="16" height="16" /></button>
     <time class="clock" id="clock"></time>
   </div>
+
+  <aside id="volume-control" class="window volume-control" popover="auto" data-volume-control aria-labelledby="volume-title">
+    <div class="window-body volume-control-body">
+      <label class="volume-title" id="volume-title" for="volume-slider">Volume</label>
+      <div class="volume-slider-wrap">
+        <div class="is-vertical">
+          <input class="has-box-indicator" id="volume-slider" type="range" min="0" max="1" step="0.01" value="0.72" data-volume-slider aria-orientation="vertical" />
+        </div>
+      </div>
+      <div class="field-row volume-mute">
+        <input id="volume-mute" type="checkbox" data-volume-mute />
+        <label for="volume-mute">Mute</label>
+      </div>
+    </div>
+  </aside>
 
   <!-- Welcome balloon: comes from the info icon in the tray. -->
   <aside class="balloon" id="welcome-balloon" data-balloon aria-labelledby="welcome-title" hidden={!welcome}>

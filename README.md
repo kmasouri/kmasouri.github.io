@@ -50,11 +50,11 @@ Tip: the boot screen only plays once per browser session. To see it again, use
 If the frontmatter is wrong (missing title, bad date), the build fails with a message
 that names the file and field. The schema lives in `src/content.config.ts`.
 
-### Moving posts over from Notion
+### Moving posts over from another platform
 
-In Notion, use **••• → Export → Markdown & CSV** on a page. Rename the exported `.md` file
-to a URL-friendly slug, add the frontmatter block above, move any images into
-`src/assets/blog/`, and fix the image paths.
+Export the original post as Markdown, rename the `.md` file to a URL-friendly slug,
+add the frontmatter block above, move any images into `src/assets/blog/`, and fix the
+image paths.
 
 ## Where things live
 

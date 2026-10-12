@@ -25,4 +25,3 @@ TODO: The topics you plan to cover, e.g.:
 ## About this site
 
 Built with Astro, styled with XP.css and TuiCss, and hosted on GitHub Pages.
-It used to live on Notion.

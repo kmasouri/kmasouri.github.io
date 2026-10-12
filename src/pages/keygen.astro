@@ -1,0 +1,65 @@
+---
+import Desktop from '../layouts/Desktop.astro';
+import XPWindow from '../components/XPWindow.astro';
+import '../styles/keygen.css';
+
+const icon = '/icons/keygen.png';
+---
+
+<Desktop
+  title="keygen.exe"
+  description="A harmless fake keygen with an original cracktro soundtrack."
+  tasks={[{ id: 'keygen-window', title: 'keygen.exe', icon }]}
+  noindex
+>
+  <XPWindow
+    id="keygen-window"
+    title="keygen.exe"
+    icon={icon}
+    width="574px"
+    height="auto"
+    class="keygen-window"
+  >
+    <section class="keygen-program" data-keygen aria-labelledby="keygen-heading">
+      <h1 class="sr-only" id="keygen-heading">keygen.exe</h1>
+      <audio src="/audio/keygen-theme.mp3" preload="auto" autoplay loop data-keygen-audio></audio>
+
+      <div class="keygen-release">
+        <a href="#serial">keygen.exe</a>
+        <span class="keygen-release-close" aria-hidden="true">×</span>
+      </div>
+
+      <form class="keygen-form" data-keygen-form>
+        <div class="keygen-row">
+          <label for="serial">Serial:</label>
+          <input id="serial" type="text" value="" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" readonly data-keygen-serial />
+          <button type="button" data-keygen-copy>Copy</button>
+        </div>
+        <button class="keygen-generate" type="submit">Generate</button>
+        <p class="keygen-message"><output data-keygen-status>Ready — generated keys are decorative only.</output></p>
+      </form>
+
+      <footer class="keygen-footer">
+        <span class="keygen-group">:: KMSR DIVISION 2003 ::</span>
+        <div class="field-row keygen-music">
+          <input id="keygen-music" type="checkbox" checked data-keygen-music />
+          <label for="keygen-music">Music</label>
+        </div>
+        <button type="button" data-keygen-about-open>About</button>
+      </footer>
+
+      <dialog class="keygen-about" data-keygen-about aria-labelledby="keygen-about-title">
+        <h2 class="keygen-about-title" id="keygen-about-title">About keygen.exe</h2>
+        <div class="keygen-about-body">
+          <p><strong>keygen.exe</strong></p>
+          <p>A harmless browser toy with an original soundtrack. It does not patch, unlock, or activate any software.</p>
+          <div class="keygen-about-actions"><button type="button" data-keygen-about-close>OK</button></div>
+        </div>
+      </dialog>
+    </section>
+  </XPWindow>
+
+  <script>
+    import '../scripts/keygen';
+  </script>
+</Desktop>

@@ -25,11 +25,73 @@ function initPage() {
   initHistoryButtons();
   tick();
   initStartMenu();
+  initVolumeControl();
   initTurnOff();
   initWindows();
   initSelectionBoxes();
   initDesktopIcons();
   initExtras();
+}
+
+// --- Volume -----------------------------------------------------------------
+
+const VOLUME_KEY = 'xp:volume';
+const MUTED_KEY = 'xp:muted';
+
+function initVolumeControl() {
+  const slider = document.querySelector<HTMLInputElement>('[data-volume-slider]');
+  const mute = document.querySelector<HTMLInputElement>('[data-volume-mute]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-volume-toggle]');
+  if (!slider || !mute || !toggle) return;
+
+  let volume = 0.72;
+  let muted = false;
+  try {
+    const storedVolume = Number(localStorage.getItem(VOLUME_KEY));
+    if (Number.isFinite(storedVolume) && storedVolume >= 0 && storedVolume <= 1) volume = storedVolume;
+    muted = localStorage.getItem(MUTED_KEY) === '1';
+  } catch {
+    /* storage blocked: use defaults */
+  }
+
+  const apply = () => {
+    document.querySelectorAll<HTMLMediaElement>('audio, video').forEach((media) => {
+      media.volume = volume;
+      media.muted = muted;
+    });
+    slider.value = String(volume);
+    mute.checked = muted;
+    toggle.classList.toggle('is-muted', muted || volume === 0);
+    toggle.setAttribute('aria-label', muted || volume === 0 ? 'Open volume control (muted)' : 'Open volume control');
+  };
+
+  const save = () => {
+    try {
+      localStorage.setItem(VOLUME_KEY, String(volume));
+      localStorage.setItem(MUTED_KEY, muted ? '1' : '0');
+    } catch {
+      /* storage blocked: state lasts for this page only */
+    }
+  };
+
+  slider.addEventListener('input', () => {
+    volume = Number(slider.value);
+    if (volume > 0 && muted) muted = false;
+    save();
+    apply();
+  });
+  mute.addEventListener('change', () => {
+    muted = mute.checked;
+    save();
+    apply();
+  });
+  toggle.addEventListener('dblclick', () => {
+    muted = !muted;
+    save();
+    apply();
+  });
+
+  apply();
 }
 
 // --- Back / Forward ------------------------------------------------------------

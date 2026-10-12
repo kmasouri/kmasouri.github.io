@@ -1,0 +1,180 @@
+.keygen-window {
+  --win-w: 574px !important;
+}
+
+.keygen-window .xp-window-body {
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  background: #ece9d8;
+}
+
+.keygen-program {
+  width: 100%;
+  min-width: 0;
+  min-height: 100%;
+  padding: 7px 10px 9px;
+  background: #ece9d8;
+  color: #1d1d1d;
+  font: 11px Tahoma, 'Segoe UI', sans-serif;
+}
+
+.keygen-release {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 26px;
+  margin-bottom: 7px;
+  padding: 0 5px 0 9px;
+  border: 1px solid #aca899;
+  border-top-color: #fff;
+  border-left-color: #fff;
+  background: #f3f1e7;
+}
+
+.keygen-release a {
+  min-width: 0;
+  overflow: hidden;
+  color: #3131a2;
+  font-size: 11px;
+  text-decoration: underline;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.keygen-release-close {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid #aca899;
+  background: #ece9d8;
+  color: #555;
+  font: 13px/16px Tahoma, sans-serif;
+  text-align: center;
+}
+
+.keygen-form {
+  padding: 12px 6px 8px;
+}
+
+.keygen-row {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: 48px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+}
+
+.keygen-row label {
+  text-align: right;
+}
+
+.keygen-row input {
+  width: 100%;
+  min-width: 0;
+  height: 23px;
+  padding: 2px 5px;
+  border: 2px solid;
+  border-color: #7f9db9 #fff #fff #7f9db9;
+  border-radius: 0;
+  background: #fff;
+  color: #222;
+  font: 11px 'Lucida Console', Consolas, monospace;
+}
+
+.keygen-row input::placeholder {
+  color: #8a8a8a;
+}
+
+.keygen-form button,
+.keygen-footer button,
+.keygen-about button {
+  min-width: 74px;
+  min-height: 24px;
+  font: 11px Tahoma, sans-serif;
+}
+
+.keygen-generate {
+  display: block;
+  min-width: 112px !important;
+  margin: 12px auto 0;
+}
+
+.keygen-message {
+  min-height: 15px;
+  margin: 7px 0 0;
+  color: #666;
+  font-size: 10px;
+  text-align: center;
+}
+
+.keygen-footer {
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 12px;
+  min-height: 38px;
+  padding: 6px 3px 0;
+  border-top: 1px solid #aca899;
+  box-shadow: inset 0 1px #fff;
+}
+
+.keygen-group {
+  overflow: hidden;
+  color: #b1afa6;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.keygen-music {
+  white-space: nowrap;
+}
+
+.keygen-about {
+  width: min(330px, calc(100vw - 32px));
+  padding: 3px;
+  border: 1px solid #003c74;
+  background: #ece9d8;
+  color: #111;
+  font: 11px Tahoma, sans-serif;
+  box-shadow: 3px 4px 12px rgb(0 0 0 / 0.4);
+}
+
+.keygen-about::backdrop {
+  background: rgb(0 0 0 / 0.18);
+}
+
+.keygen-about-title {
+  margin: 0;
+  padding: 5px 7px;
+  background: linear-gradient(90deg, #0a246a, #a6caf0);
+  color: #fff;
+  font-size: 11px;
+}
+
+.keygen-about-body {
+  padding: 14px 14px 10px;
+  line-height: 1.45;
+}
+
+.keygen-about-body p {
+  margin: 0 0 8px;
+}
+
+.keygen-about-actions {
+  text-align: right;
+}
+
+@media (max-width: 600px) {
+  .keygen-program { padding: 5px; }
+  .keygen-row { grid-template-columns: 44px minmax(0, 1fr); }
+  .keygen-row button { grid-column: 2; justify-self: end; }
+  .keygen-footer { grid-template-columns: 1fr auto; }
+  .keygen-group { grid-column: 1 / -1; grid-row: 1; }
+}
