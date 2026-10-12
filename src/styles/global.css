@@ -35,7 +35,7 @@ body {
 body {
   margin: 0;
   overflow: hidden;
-  background: #3a6ea5 url('/wallpaper.svg') center / cover no-repeat;
+  background: #0a6aa8 url('/wallpaper.webp') center / cover no-repeat;
   color: var(--text);
   font-family: var(--font-ui);
   font-size: 12px;
