@@ -1123,6 +1123,170 @@ html:not(.js) .title-bar-controls [data-action] {
   display: none;
 }
 
+/* Internet Explorer's Stop and Refresh: a page with a red X / green arrows */
+.tb-page {
+  width: 24px;
+  height: 24px;
+}
+
+.tb-page .sheet {
+  fill: #fff;
+  stroke: #6b7fa6;
+  stroke-width: 1;
+}
+
+.tb-page .fold {
+  fill: #dfe7f5;
+  stroke: #6b7fa6;
+  stroke-width: 1;
+}
+
+.tb-page .stop {
+  fill: none;
+  stroke: #d42b20;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+}
+
+.tb-page .spin,
+.tb-page .spin-head {
+  fill: none;
+  stroke: #2a9d3a;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.xp-toolbar button.tb-btn[data-print] {
+  padding-right: 3px;
+}
+
+/* IE address bar: icon + URL + dropdown, Go button, Links */
+.ie-addressbar {
+  gap: 4px;
+}
+
+.ie-address {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  min-width: 0;
+  height: 22px;
+  border: 1px solid #7f9db9;
+  background: #fff;
+}
+
+.ie-address img {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0 2px 0 3px;
+}
+
+.ie-addressbar .ie-address input {
+  flex: 1;
+  height: 100%;
+  border: 0;
+  outline: none;
+}
+
+.ie-drop {
+  flex: none;
+  position: relative;
+  width: 17px;
+  height: 100%;
+  border-left: 1px solid #c3d3fd;
+  background: linear-gradient(180deg, #d0dcfb, #b5c8f7);
+}
+
+.ie-drop::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 5px;
+  border-style: solid;
+  border-width: 4px 3.5px 0;
+  border-color: #4d6185 transparent transparent;
+}
+
+.ie-go {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px 2px 2px;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  color: #000 !important;
+  text-decoration: none;
+}
+
+.ie-go:hover {
+  border-color: #cecece;
+  background: #fff;
+}
+
+.ie-go svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ie-go rect {
+  fill: #2f9e44;
+  stroke: #1b6b2b;
+}
+
+.ie-go path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.ie-links {
+  flex: none;
+  padding: 0 4px 0 8px;
+  border-left: 1px solid #c5c2b2;
+  color: #444;
+}
+
+.ie-links span {
+  font-weight: 700;
+}
+
+.ie-status .status-bar-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ie-status .status-bar-field img {
+  width: 16px;
+  height: 16px;
+}
+
+/* A 2003 blog page: Georgia body, Verdana headings, classic link colours */
+#post-window .prose {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 16px;
+}
+
+#post-window .prose h1,
+#post-window .prose h2,
+#post-window .prose h3,
+#post-window .prose h4 {
+  font-family: Verdana, Tahoma, var(--font-ui);
+}
+
+#post-window .prose a {
+  color: #0000ee;
+}
+
+#post-window .prose a:visited {
+  color: #551a8b;
+}
+
 .tb-sep {
   width: 1px;
   align-self: stretch;
@@ -1614,5 +1778,40 @@ html:not(.js) .title-bar-controls [data-action] {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+/* Print (IE's Print button): just the article, no desktop around it */
+@media print {
+  body {
+    overflow: visible;
+    background: none;
+  }
+
+  .taskbar,
+  .desktop-icons,
+  .balloon,
+  .skip-link,
+  .xp-window .title-bar,
+  .xp-window .menubar,
+  .xp-window .toolbar,
+  .xp-window .addressbar,
+  .xp-window .status-bar,
+  .resize-handle {
+    display: none !important;
+  }
+
+  .desktop,
+  .window-layer,
+  .xp-window,
+  .window .xp-window-body {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0;
+    overflow: visible !important;
+    box-shadow: none !important;
+    border: 0;
   }
 }

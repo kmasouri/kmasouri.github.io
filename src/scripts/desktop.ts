@@ -565,6 +565,9 @@ function initExtras() {
     input.addEventListener('focus', () => input.select());
   });
 
+  // Internet Explorer's Print button.
+  document.querySelectorAll('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
+
   // Explorer's Folders button: hide or show the task pane.
   document.querySelectorAll<HTMLButtonElement>('[data-toggle-tasks]').forEach((button) => {
     const explorer = button.closest('.xp-window')?.querySelector('.explorer');

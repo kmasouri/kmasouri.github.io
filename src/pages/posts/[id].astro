@@ -2,6 +2,7 @@
 import { render } from 'astro:content';
 import Desktop from '../../layouts/Desktop.astro';
 import XPWindow from '../../components/XPWindow.astro';
+import BrowserChrome from '../../components/BrowserChrome.astro';
 import { formatDate, getPosts, postUrl, readingTime, type Post } from '../../lib/posts';
 
 export async function getStaticPaths() {
@@ -34,15 +35,7 @@ const icon = '/icons/page.png';
 >
   <XPWindow id="post-window" title={`${title} - Internet Explorer`} icon={icon} width="860px" height="calc(100% - 48px)" closeHref="/posts/">
     <div slot="chrome">
-      <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
-      <nav class="toolbar" aria-label="Browser">
-        <a class="tb-btn" href="/posts/"><span class="tb-arrow" aria-hidden="true">&larr;</span> Back<span class="sr-only"> to My Blog</span></a>
-        <a class="tb-btn" href="/"><span class="tb-arrow" aria-hidden="true">&#8962;</span> Home</a>
-      </nav>
-      <div class="addressbar">
-        <label for="address">Address</label>
-        <input id="address" type="text" readonly value={url} data-address />
-      </div>
+      <BrowserChrome back="/posts/" path={postUrl(post)} url={url} />
     </div>
 
     <article class="prose">
@@ -89,10 +82,11 @@ const icon = '/icons/page.png';
       }
     </article>
 
-    <div slot="status" class="status-bar">
-      <p class="status-bar-field">Done</p>
-      <p class="status-bar-field">{formatDate(date, 'short')}</p>
-      <p class="status-bar-field">Internet</p>
+    <div slot="status" class="status-bar ie-status">
+      <p class="status-bar-field"><img src="/icons/page.png" alt="" width="16" height="16" />Done</p>
+      <p class="status-bar-field" aria-hidden="true"></p>
+      <p class="status-bar-field" aria-hidden="true"></p>
+      <p class="status-bar-field"><img src="/icons/globe.png" alt="" width="16" height="16" />Internet</p>
     </div>
   </XPWindow>
 </Desktop>
