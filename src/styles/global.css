@@ -146,14 +146,46 @@ img {
 }
 
 .desktop-icon:focus-visible span,
-.desktop-icon:active span {
+.desktop-icon:active span,
+.desktop-icon.is-selected span {
   background: var(--xp-blue);
   text-shadow: none;
   outline: 1px dotted #fff;
 }
 
-.desktop-icon:focus-visible img {
+.desktop-icon:focus-visible img,
+.desktop-icon.is-selected img {
   filter: drop-shadow(1px 2px 1px rgb(0 0 0 / 0.35)) sepia(1) hue-rotate(180deg) saturate(3) brightness(0.9);
+}
+
+/* Free-placed icons (desktop.ts positions each one on the grid). */
+.desktop-icons ul.is-free {
+  display: block;
+  position: relative;
+}
+
+.desktop-icons ul.is-free > li {
+  position: absolute;
+  width: 84px;
+  height: 92px;
+}
+
+.desktop-icons li.is-dragging {
+  z-index: 1;
+  opacity: 0.75;
+}
+
+.desktop-icon {
+  user-select: none;
+}
+
+/* XP's drag-to-select marquee */
+.selection-box {
+  position: absolute;
+  z-index: 1;
+  border: 1px solid #316ac5;
+  background: rgb(49 106 197 / 0.25);
+  pointer-events: none;
 }
 
 .window-layer {
@@ -1069,6 +1101,7 @@ html:not(.js) .title-bar-controls [data-action] {
 }
 
 .file-pane {
+  position: relative;
   padding: 12px 16px 24px;
   font-family: var(--font-read);
 }
@@ -1098,6 +1131,15 @@ html:not(.js) .title-bar-controls [data-action] {
   background: #f1f6fe;
 }
 
+.file-list > li.is-selected {
+  background: #dbe6f8;
+}
+
+.file-list > li.is-selected .file-title {
+  background: var(--xp-blue);
+  color: #fff;
+}
+
 .file-list img {
   grid-row: span 2;
   width: 40px;
@@ -1105,6 +1147,7 @@ html:not(.js) .title-bar-controls [data-action] {
 }
 
 .file-list .file-title {
+  justify-self: start;
   font-size: 16px;
   font-weight: 600;
   line-height: 1.3;

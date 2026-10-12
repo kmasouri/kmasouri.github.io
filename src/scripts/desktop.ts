@@ -1,5 +1,6 @@
 // Desktop behaviour: clock, Start menu extras, and window controls
-// (minimize / maximize / close / drag / resize). Everything here is an enhancement;
+// (minimize / maximize / close / drag / resize), selection boxes and movable
+// desktop icons. Everything here is an enhancement;
 // links and the Start menu (a native popover) work without JavaScript.
 
 const desktopQuery = matchMedia('(min-width: 768px)');
@@ -234,6 +235,234 @@ desktopQuery.addEventListener('change', () => {
     win.style.maxHeight = '';
   });
 });
+
+// --- Selection box -------------------------------------------------------------
+
+// Dragging across empty space draws XP's translucent selection box; every item
+// it touches is selected. Used on the desktop and in folder windows.
+function enableSelectionBox(area: HTMLElement, itemSelector: string, isEmptySpot: (target: HTMLElement) => boolean) {
+  let start: { x: number; y: number } | null = null;
+  let box: HTMLDivElement | null = null;
+  const items = () => [...area.querySelectorAll<HTMLElement>(itemSelector)];
+  const local = (event: PointerEvent) => {
+    const rect = area.getBoundingClientRect();
+    return {
+      x: Math.min(Math.max(event.clientX - rect.left + area.scrollLeft, 0), area.scrollWidth),
+      y: Math.min(Math.max(event.clientY - rect.top + area.scrollTop, 0), area.scrollHeight),
+    };
+  };
+
+  area.addEventListener('pointerdown', (event) => {
+    if (event.button !== 0 || !desktopQuery.matches || !isEmptySpot(event.target as HTMLElement)) return;
+    items().forEach((item) => item.classList.remove('is-selected'));
+    start = local(event);
+    area.setPointerCapture(event.pointerId);
+    event.preventDefault();
+  });
+
+  area.addEventListener('pointermove', (event) => {
+    if (!start) return;
+    const point = local(event);
+    if (!box) {
+      if (Math.hypot(point.x - start.x, point.y - start.y) < 3) return;
+      box = document.createElement('div');
+      box.className = 'selection-box';
+      // Under any windows, above the icons.
+      area.insertBefore(box, area.querySelector(':scope > .window-layer'));
+    }
+    box.style.left = `${Math.min(start.x, point.x)}px`;
+    box.style.top = `${Math.min(start.y, point.y)}px`;
+    box.style.width = `${Math.abs(point.x - start.x)}px`;
+    box.style.height = `${Math.abs(point.y - start.y)}px`;
+    const b = box.getBoundingClientRect();
+    for (const item of items()) {
+      const r = item.getBoundingClientRect();
+      const hit = r.left < b.right && r.right > b.left && r.top < b.bottom && r.bottom > b.top;
+      item.classList.toggle('is-selected', hit);
+    }
+  });
+
+  const stop = (event: PointerEvent) => {
+    if (!start) return;
+    start = null;
+    box?.remove();
+    box = null;
+    if (area.hasPointerCapture(event.pointerId)) area.releasePointerCapture(event.pointerId);
+  };
+  area.addEventListener('pointerup', stop);
+  area.addEventListener('pointercancel', stop);
+}
+
+const desktopArea = document.getElementById('desktop');
+if (desktopArea) {
+  enableSelectionBox(desktopArea, '.desktop-icon', (t) => !t.closest('.desktop-icon, .xp-window, .balloon'));
+}
+document.querySelectorAll<HTMLElement>('.file-pane').forEach((pane) => {
+  enableSelectionBox(pane, '.file-list > li', (t) => !t.closest('a, button, input'));
+});
+
+// --- Movable desktop icons ------------------------------------------------------
+
+// Icons can be dragged anywhere on the desktop and snap to the same grid the
+// CSS lays them out on (ul padding 12px 8px; 84x92 cells with a 6px gap).
+// Positions are a per-browser convenience kept in localStorage.
+const ICON_GRID = { left: 8, top: 12, w: 90, h: 98 };
+const ICON_KEY = 'xp:icon-positions';
+const iconList = document.querySelector<HTMLElement>('.desktop-icons ul');
+
+type Cell = [col: number, row: number];
+
+function loadIconCells(): Record<string, Cell> {
+  try {
+    return JSON.parse(localStorage.getItem(ICON_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function saveIconCells(cells: Record<string, Cell>) {
+  try {
+    localStorage.setItem(ICON_KEY, JSON.stringify(cells));
+  } catch {
+    /* storage blocked: positions just won't persist */
+  }
+}
+
+if (iconList) {
+  const slots = [...iconList.querySelectorAll<HTMLElement>(':scope > li')];
+  const keyOf = (li: HTMLElement) => li.querySelector('a')?.getAttribute('href') ?? '';
+  const iconOf = (li: HTMLElement) => li.querySelector<HTMLElement>('.desktop-icon')!;
+  let cells: Record<string, Cell> = loadIconCells();
+  let suppressClick = false;
+
+  const gridSize = () => ({
+    cols: Math.max(1, Math.floor((iconList.clientWidth - ICON_GRID.left + 6) / ICON_GRID.w)),
+    rows: Math.max(1, Math.floor((iconList.clientHeight - ICON_GRID.top * 2 + 6) / ICON_GRID.h)),
+  });
+
+  const moveTo = (li: HTMLElement, [col, row]: Cell) => {
+    li.style.left = `${ICON_GRID.left + col * ICON_GRID.w}px`;
+    li.style.top = `${ICON_GRID.top + row * ICON_GRID.h}px`;
+  };
+
+  // Nearest free cell to `want`, searching outward ring by ring.
+  const nearestFree = (want: Cell, taken: Set<string>): Cell => {
+    const { cols, rows } = gridSize();
+    const c0 = Math.min(Math.max(want[0], 0), cols - 1);
+    const r0 = Math.min(Math.max(want[1], 0), rows - 1);
+    for (let d = 0; d < cols + rows; d++) {
+      for (let dc = -d; dc <= d; dc++) {
+        for (let dr = -d; dr <= d; dr++) {
+          if (Math.max(Math.abs(dc), Math.abs(dr)) !== d) continue;
+          const c = c0 + dc, r = r0 + dr;
+          if (c >= 0 && c < cols && r >= 0 && r < rows && !taken.has(`${c},${r}`)) return [c, r];
+        }
+      }
+    }
+    return [c0, r0];
+  };
+
+  // Put every icon on a free cell: its saved spot, or the default column order.
+  const layout = () => {
+    if (!desktopQuery.matches) {
+      iconList.classList.remove('is-free');
+      slots.forEach((li) => li.removeAttribute('style'));
+      return;
+    }
+    iconList.classList.add('is-free');
+    const { rows } = gridSize();
+    const taken = new Set<string>();
+    slots.forEach((li, i) => {
+      const want = cells[keyOf(li)] ?? [Math.floor(i / rows), i % rows];
+      const cell = nearestFree(want, taken);
+      taken.add(`${cell[0]},${cell[1]}`);
+      moveTo(li, cell);
+    });
+  };
+
+  for (const li of slots) {
+    const icon = iconOf(li);
+    icon.addEventListener('dragstart', (event) => event.preventDefault());
+
+    let start: { x: number; y: number } | null = null;
+    let moving: { li: HTMLElement; left: number; top: number }[] = [];
+    let dragging = false;
+
+    icon.addEventListener('pointerdown', (event) => {
+      if (event.button !== 0 || !desktopQuery.matches) return;
+      suppressClick = false;
+      if (!icon.classList.contains('is-selected')) {
+        slots.forEach((s) => iconOf(s).classList.remove('is-selected'));
+        icon.classList.add('is-selected');
+      }
+      start = { x: event.clientX, y: event.clientY };
+      moving = slots
+        .filter((s) => iconOf(s).classList.contains('is-selected'))
+        .map((s) => ({ li: s, left: s.offsetLeft, top: s.offsetTop }));
+      dragging = false;
+      icon.setPointerCapture(event.pointerId);
+    });
+
+    icon.addEventListener('pointermove', (event) => {
+      if (!start) return;
+      const dx = event.clientX - start.x, dy = event.clientY - start.y;
+      if (!dragging && Math.hypot(dx, dy) < 5) return;
+      dragging = true;
+      for (const m of moving) {
+        m.li.classList.add('is-dragging');
+        m.li.style.left = `${m.left + dx}px`;
+        m.li.style.top = `${m.top + dy}px`;
+      }
+    });
+
+    const stop = (event: PointerEvent) => {
+      if (!start) return;
+      start = null;
+      if (icon.hasPointerCapture(event.pointerId)) icon.releasePointerCapture(event.pointerId);
+      if (!dragging) return;
+      suppressClick = true;
+      // Snap the dragged icons; everything else keeps its cell.
+      const movingSet = new Set(moving.map((m) => m.li));
+      const taken = new Set<string>();
+      for (const s of slots) {
+        if (movingSet.has(s)) continue;
+        const c = Math.round((s.offsetLeft - ICON_GRID.left) / ICON_GRID.w);
+        const r = Math.round((s.offsetTop - ICON_GRID.top) / ICON_GRID.h);
+        taken.add(`${c},${r}`);
+        cells[keyOf(s)] = [c, r];
+      }
+      for (const m of moving) {
+        m.li.classList.remove('is-dragging');
+        const want: Cell = [
+          Math.round((m.li.offsetLeft - ICON_GRID.left) / ICON_GRID.w),
+          Math.round((m.li.offsetTop - ICON_GRID.top) / ICON_GRID.h),
+        ];
+        const cell = nearestFree(want, taken);
+        taken.add(`${cell[0]},${cell[1]}`);
+        cells[keyOf(m.li)] = cell;
+        moveTo(m.li, cell);
+      }
+      saveIconCells(cells);
+    };
+    icon.addEventListener('pointerup', stop);
+    icon.addEventListener('pointercancel', stop);
+
+    // A drag that ends on the icon fires a click; don't let it open the link.
+    icon.addEventListener('click', (event) => {
+      if (!suppressClick) return;
+      suppressClick = false;
+      event.preventDefault();
+    });
+  }
+
+  layout();
+  let pending = 0;
+  window.addEventListener('resize', () => {
+    cancelAnimationFrame(pending);
+    pending = requestAnimationFrame(layout);
+  });
+  desktopQuery.addEventListener('change', layout);
+}
 
 // --- Small extras -------------------------------------------------------------
 
