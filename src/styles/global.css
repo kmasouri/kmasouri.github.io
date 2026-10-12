@@ -589,6 +589,150 @@ html:not(.js) .balloon-close {
   outline: none;
 }
 
+/* ------------------------------------------------- turn off computer box */
+
+.turnoff {
+  width: min(330px, calc(100vw - 32px));
+  padding: 0;
+  border: 1px solid #00309c;
+  border-radius: 0;
+  background: #5a7edc;
+  color: #fff;
+  font-family: var(--font-ui);
+  box-shadow: 4px 4px 12px rgb(0 0 0 / 0.5);
+}
+
+/* XP drains the colour from the desktop behind this box */
+.turnoff::backdrop {
+  background: rgb(0 0 0 / 0.15);
+  backdrop-filter: grayscale(1);
+}
+
+.turnoff-head {
+  margin: 0;
+  padding: 10px 14px;
+  background: linear-gradient(180deg, #0a2fa8, #00309c 60%, #002484);
+  font: 400 19px 'Franklin Gothic Medium', 'Trebuchet MS', var(--font-ui);
+}
+
+.turnoff-body {
+  display: flex;
+  justify-content: space-around;
+  padding: 26px 12px 22px;
+  background: linear-gradient(180deg, #8aa8ee, #5a7edc 70%);
+  border-top: 1px solid #a8c0f5;
+}
+
+.turnoff-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px 12px;
+  background: #00309c;
+}
+
+.turnoff-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  /* undo XP.css button chrome; these are icon buttons */
+  min-width: 0;
+  min-height: 0;
+  padding: 4px 6px;
+  border: 1px solid transparent;
+  background: none;
+  box-shadow: none;
+  color: #fff;
+  font: 700 11px var(--font-ui);
+  cursor: pointer;
+}
+
+.turnoff-choice:hover,
+.turnoff-choice:focus-visible {
+  border-color: rgb(255 255 255 / 0.5);
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.12);
+  outline: none;
+}
+
+.turnoff-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.turnoff-icon rect {
+  stroke: rgb(0 0 0 / 0.35);
+  stroke-width: 1;
+}
+
+.turnoff-icon path,
+.turnoff-icon circle {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.turnoff-icon.is-standby rect {
+  fill: #f0a81c;
+}
+
+.turnoff-icon.is-off rect {
+  fill: #e0391e;
+}
+
+.turnoff-icon.is-restart rect {
+  fill: #3ba63a;
+}
+
+/* Stand By / Turn Off: the monitor goes dark */
+.power-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: #000;
+  color: #8a8a8a;
+  font: 16px/1.4 var(--font-mono);
+  text-align: center;
+  cursor: pointer;
+}
+
+.power-screen[hidden] {
+  display: none;
+}
+
+.power-screen p {
+  margin: 0;
+}
+
+.power-screen p:first-child {
+  color: #c8c8c8;
+  font-size: 20px;
+}
+
+.power-screen p:last-child {
+  animation: power-blink 1.2s steps(2, start) infinite;
+}
+
+@keyframes power-blink {
+  to {
+    visibility: hidden;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .power-screen p:last-child {
+    animation: none;
+  }
+}
+
 /* ----------------------------------------------------------------- windows */
 
 .xp-window {

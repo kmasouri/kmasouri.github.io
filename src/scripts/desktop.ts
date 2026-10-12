@@ -21,6 +21,7 @@ document.addEventListener('astro:page-load', initPage);
 function initPage() {
   tick();
   initStartMenu();
+  initTurnOff();
   initWindows();
   initSelectionBoxes();
   initDesktopIcons();
@@ -50,17 +51,66 @@ function initStartMenu() {
     startButton?.classList.toggle('is-pressed', open);
     if (open) startMenu.querySelector<HTMLElement>('a')?.focus();
   });
+}
 
-  // "Turn Off Computer" replays the boot sequence (it's a full reload).
-  document.querySelectorAll('[data-restart]').forEach((link) =>
-    link.addEventListener('click', () => {
-      try {
-        sessionStorage.removeItem('xp:booted');
-      } catch {
-        /* ignore */
+// --- Turn off computer ----------------------------------------------------------
+
+// Start > Turn Off Computer opens XP's dialog. Stand By and Turn Off black the
+// screen; a key or click wakes it (Stand By) or powers on through the BIOS
+// boot (Turn Off). Restart goes straight to the boot.
+function powerOn() {
+  try {
+    sessionStorage.removeItem('xp:booted');
+  } catch {
+    /* ignore */
+  }
+  window.location.href = '/';
+}
+
+function showPowerScreen(mode: 'standby' | 'off') {
+  const screen = document.querySelector<HTMLElement>('[data-power-screen]');
+  if (!screen) return;
+  screen.querySelector('[data-power-title]')!.textContent = mode === 'off' ? 'Your computer is off.' : 'Stand By';
+  screen.querySelector('[data-power-hint]')!.textContent =
+    mode === 'off' ? 'Press any key or click to turn it on.' : 'Press any key or click to wake up.';
+  screen.hidden = false;
+  screen.classList.toggle('is-off', mode === 'off');
+
+  // Ignore the click that chose the option; listen from the next tick.
+  setTimeout(() => {
+    const wake = (event: Event) => {
+      event.preventDefault();
+      window.removeEventListener('keydown', wake, true);
+      window.removeEventListener('pointerdown', wake, true);
+      if (mode === 'off') {
+        powerOn();
+      } else {
+        screen.hidden = true;
       }
-    }),
-  );
+    };
+    window.addEventListener('keydown', wake, true);
+    window.addEventListener('pointerdown', wake, true);
+  });
+}
+
+function initTurnOff() {
+  const dialog = document.getElementById('turn-off') as HTMLDialogElement | null;
+  const link = document.querySelector<HTMLAnchorElement>('[data-turn-off]');
+  if (!dialog || !link) return;
+
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    document.getElementById('start-menu')?.hidePopover();
+    dialog.showModal();
+  });
+
+  dialog.addEventListener('click', (event) => {
+    const choice = (event.target as HTMLElement).closest<HTMLElement>('[data-power]')?.dataset.power;
+    if (!choice) return;
+    dialog.close();
+    if (choice === 'restart') powerOn();
+    else if (choice === 'standby' || choice === 'off') showPowerScreen(choice);
+  });
 }
 
 // --- Windows -----------------------------------------------------------------
