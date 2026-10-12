@@ -67,6 +67,18 @@ const ogImage = new URL('/og.png', Astro.site);
       } catch (e) {
         /* storage blocked: skip the boot screen */
       }
+      // Apply remembered desktop state before the first paint, so the page
+      // doesn't flash its defaults and then rearrange (see desktop.ts).
+      try {
+        if (sessionStorage.getItem('xp:welcome-closed') === '1') {
+          document.documentElement.classList.add('welcome-closed');
+        }
+        if (matchMedia('(min-width: 768px)').matches && localStorage.getItem('xp:icon-positions')) {
+          document.documentElement.classList.add('icons-pending');
+        }
+      } catch (e) {
+        /* storage blocked: defaults are fine */
+      }
     </script>
   </head>
   <body>

@@ -270,8 +270,28 @@ html:not(.js) .balloon-close {
   display: none;
 }
 
-.balloon[hidden] {
+.balloon[hidden],
+html.welcome-closed .balloon {
   display: none;
+}
+
+/* With JS, the balloon waits until it is lined up with its tray icon. */
+html.js .balloon:not(.is-placed) {
+  visibility: hidden;
+}
+
+/* Saved icon positions exist: keep the icons out of sight until desktop.ts
+   has put them there, instead of showing the default column first. */
+html.icons-pending .desktop-icons {
+  visibility: hidden;
+  /* failsafe: show them anyway if the script never runs */
+  animation: icons-reveal 0s 2s forwards;
+}
+
+@keyframes icons-reveal {
+  to {
+    visibility: visible;
+  }
 }
 
 /* ---------------------------------------------------------------- taskbar */

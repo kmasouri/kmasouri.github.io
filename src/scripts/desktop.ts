@@ -14,7 +14,9 @@ const desktopQuery = matchMedia('(min-width: 768px)');
 // The router copies <html> attributes from the incoming page, which would drop
 // the `js` flag the inline head script sets; keep it.
 document.addEventListener('astro:before-swap', (event) => {
-  event.newDocument.documentElement.classList.add('js');
+  const html = event.newDocument.documentElement;
+  html.classList.add('js');
+  html.classList.toggle('welcome-closed', document.documentElement.classList.contains('welcome-closed'));
 });
 document.addEventListener('astro:page-load', initPage);
 
@@ -451,6 +453,7 @@ function initDesktopIcons() {
     if (!desktopQuery.matches) {
       iconList.classList.remove('is-free');
       slots.forEach((li) => li.removeAttribute('style'));
+      document.documentElement.classList.remove('icons-pending');
       return;
     }
     iconList.classList.add('is-free');
@@ -462,6 +465,7 @@ function initDesktopIcons() {
       taken.add(`${cell[0]},${cell[1]}`);
       moveTo(li, cell);
     });
+    document.documentElement.classList.remove('icons-pending');
   };
 
   for (const li of slots) {
@@ -585,6 +589,7 @@ function placeBalloon() {
   const right = Math.max(4, window.innerWidth - center - tailToEdge);
   balloon.style.right = `${right}px`;
   balloon.style.setProperty('--tail', `${window.innerWidth - right - center - 7}px`);
+  balloon.classList.add('is-placed');
 }
 window.addEventListener('resize', placeBalloon);
 
@@ -600,6 +605,7 @@ function initBalloon() {
   }
   const show = (open: boolean) => {
     balloon.hidden = !open;
+    document.documentElement.classList.toggle('welcome-closed', !open);
     icon.setAttribute('aria-expanded', String(open));
     try {
       if (open) sessionStorage.removeItem(BALLOON_KEY);
