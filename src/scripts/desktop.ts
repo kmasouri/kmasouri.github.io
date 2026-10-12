@@ -3,46 +3,69 @@
 // desktop icons. Everything here is an enhancement;
 // links and the Start menu (a native popover) work without JavaScript.
 
+import { navigate } from 'astro:transitions/client';
+
 const desktopQuery = matchMedia('(min-width: 768px)');
+
+// --- Page swaps ----------------------------------------------------------------
+
+// Links swap the page in place (Astro's ClientRouter), so this module runs once
+// and `initPage` below runs after every page arrives, including the first.
+// The router copies <html> attributes from the incoming page, which would drop
+// the `js` flag the inline head script sets; keep it.
+document.addEventListener('astro:before-swap', (event) => {
+  event.newDocument.documentElement.classList.add('js');
+});
+document.addEventListener('astro:page-load', initPage);
+
+function initPage() {
+  tick();
+  initStartMenu();
+  initWindows();
+  initSelectionBoxes();
+  initDesktopIcons();
+  initExtras();
+}
 
 // --- Clock -----------------------------------------------------------------
 
-const clock = document.getElementById('clock') as HTMLTimeElement | null;
 function tick() {
+  const clock = document.getElementById('clock') as HTMLTimeElement | null;
   if (!clock) return;
   const now = new Date();
   clock.textContent = now.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   clock.dateTime = now.toISOString();
   clock.title = now.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 }
-tick();
 setInterval(tick, 10_000);
 
 // --- Start menu --------------------------------------------------------------
 
-const startMenu = document.getElementById('start-menu');
-const startButton = document.querySelector<HTMLButtonElement>('.start-button');
+function initStartMenu() {
+  const startMenu = document.getElementById('start-menu');
+  const startButton = document.querySelector<HTMLButtonElement>('.start-button');
 
-startMenu?.addEventListener('toggle', (event) => {
-  const open = (event as ToggleEvent).newState === 'open';
-  startButton?.classList.toggle('is-pressed', open);
-  if (open) startMenu.querySelector<HTMLElement>('a')?.focus();
-});
+  startMenu?.addEventListener('toggle', (event) => {
+    const open = (event as ToggleEvent).newState === 'open';
+    startButton?.classList.toggle('is-pressed', open);
+    if (open) startMenu.querySelector<HTMLElement>('a')?.focus();
+  });
 
-// "Turn Off Computer" replays the boot sequence.
-document.querySelectorAll('[data-restart]').forEach((link) =>
-  link.addEventListener('click', () => {
-    try {
-      sessionStorage.removeItem('xp:booted');
-    } catch {
-      /* ignore */
-    }
-  }),
-);
+  // "Turn Off Computer" replays the boot sequence (it's a full reload).
+  document.querySelectorAll('[data-restart]').forEach((link) =>
+    link.addEventListener('click', () => {
+      try {
+        sessionStorage.removeItem('xp:booted');
+      } catch {
+        /* ignore */
+      }
+    }),
+  );
+}
 
 // --- Windows -----------------------------------------------------------------
 
-const windows = [...document.querySelectorAll<HTMLElement>('[data-window]')];
+let windows: HTMLElement[] = [];
 let zTop = 10;
 
 function taskButtonFor(win: HTMLElement) {
@@ -76,39 +99,42 @@ function toggleMaximize(win: HTMLElement) {
   button?.setAttribute('aria-label', maximized ? 'Restore' : 'Maximize');
 }
 
-for (const win of windows) {
-  win.querySelector('[data-action="minimize"]')?.addEventListener('click', () => minimize(win));
-  win.querySelector('[data-action="maximize"]')?.addEventListener('click', () => toggleMaximize(win));
-  win.addEventListener('pointerdown', () => activate(win));
-  win.addEventListener('focusin', () => activate(win));
+function initWindows() {
+  windows = [...document.querySelectorAll<HTMLElement>('[data-window]')];
+  for (const win of windows) {
+    win.querySelector('[data-action="minimize"]')?.addEventListener('click', () => minimize(win));
+    win.querySelector('[data-action="maximize"]')?.addEventListener('click', () => toggleMaximize(win));
+    win.addEventListener('pointerdown', () => activate(win));
+    win.addEventListener('focusin', () => activate(win));
 
-  // Close: go back to the desktop (or wherever closeHref points) without the
-  // trailing "?" a GET form would add.
-  const closeForm = win.querySelector<HTMLFormElement>('[data-close-form]');
-  closeForm?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    win.classList.add('is-closing');
-    window.location.href = closeForm.getAttribute('action') || '/';
-  });
-
-  const handle = win.querySelector<HTMLElement>('[data-drag-handle]');
-  if (handle) {
-    handle.addEventListener('dblclick', (event) => {
-      if (!(event.target as HTMLElement).closest('button') && desktopQuery.matches) toggleMaximize(win);
+    // Close: go back to the desktop (or wherever closeHref points) without the
+    // trailing "?" a GET form would add.
+    const closeForm = win.querySelector<HTMLFormElement>('[data-close-form]');
+    closeForm?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      win.classList.add('is-closing');
+      navigate(closeForm.getAttribute('action') || '/');
     });
-    makeDraggable(win, handle);
+
+    const handle = win.querySelector<HTMLElement>('[data-drag-handle]');
+    if (handle) {
+      handle.addEventListener('dblclick', (event) => {
+        if (!(event.target as HTMLElement).closest('button') && desktopQuery.matches) toggleMaximize(win);
+      });
+      makeDraggable(win, handle);
+    }
+    makeResizable(win);
+
+    const button = taskButtonFor(win);
+    button?.addEventListener('click', () => {
+      if (win.hidden) restore(win);
+      else if (win.classList.contains('is-inactive')) activate(win);
+      else minimize(win);
+    });
   }
-  makeResizable(win);
 
-  const button = taskButtonFor(win);
-  button?.addEventListener('click', () => {
-    if (win.hidden) restore(win);
-    else if (win.classList.contains('is-inactive')) activate(win);
-    else minimize(win);
-  });
+  if (windows.length) activate(windows[windows.length - 1]);
 }
-
-if (windows.length) activate(windows[windows.length - 1]);
 
 function makeDraggable(win: HTMLElement, handle: HTMLElement) {
   let startX = 0;
@@ -229,7 +255,7 @@ function makeResizable(win: HTMLElement) {
 // Phones always show windows full-screen; forget any dragged position or size
 // when the viewport shrinks so the window doesn't end up off-screen later.
 desktopQuery.addEventListener('change', () => {
-  windows.forEach((win) => {
+  document.querySelectorAll<HTMLElement>('[data-window]').forEach((win) => {
     win.style.left = '';
     win.style.top = '';
     win.style.width = '';
@@ -295,13 +321,15 @@ function enableSelectionBox(area: HTMLElement, itemSelector: string, isEmptySpot
   area.addEventListener('pointercancel', stop);
 }
 
-const desktopArea = document.getElementById('desktop');
-if (desktopArea) {
-  enableSelectionBox(desktopArea, '.desktop-icon', (t) => !t.closest('.desktop-icon, .xp-window, .balloon'));
+function initSelectionBoxes() {
+  const desktopArea = document.getElementById('desktop');
+  if (desktopArea) {
+    enableSelectionBox(desktopArea, '.desktop-icon', (t) => !t.closest('.desktop-icon, .xp-window, .balloon'));
+  }
+  document.querySelectorAll<HTMLElement>('.file-pane').forEach((pane) => {
+    enableSelectionBox(pane, '.file-list > li', (t) => !t.closest('a, button, input'));
+  });
 }
-document.querySelectorAll<HTMLElement>('.file-pane').forEach((pane) => {
-  enableSelectionBox(pane, '.file-list > li', (t) => !t.closest('a, button, input'));
-});
 
 // --- Movable desktop icons ------------------------------------------------------
 
@@ -310,8 +338,6 @@ document.querySelectorAll<HTMLElement>('.file-pane').forEach((pane) => {
 // Positions are a per-browser convenience kept in localStorage.
 const ICON_GRID = { left: 8, top: 12, w: 90, h: 98 };
 const ICON_KEY = 'xp:icon-positions';
-const iconList = document.querySelector<HTMLElement>('.desktop-icons ul');
-
 type Cell = [col: number, row: number];
 
 function loadIconCells(): Record<string, Cell> {
@@ -330,7 +356,13 @@ function saveIconCells(cells: Record<string, Cell>) {
   }
 }
 
-if (iconList) {
+// The icons are kept across page swaps (transition:persist), so this wires
+// them up the first time they appear and does nothing after that.
+function initDesktopIcons() {
+  const iconList = document.querySelector<HTMLElement>('.desktop-icons ul');
+  if (!iconList || iconList.dataset.ready) return;
+  iconList.dataset.ready = '1';
+
   const slots = [...iconList.querySelectorAll<HTMLElement>(':scope > li')];
   const keyOf = (li: HTMLElement) => li.querySelector('a')?.getAttribute('href') ?? '';
   const iconOf = (li: HTMLElement) => li.querySelector<HTMLElement>('.desktop-icon')!;
@@ -468,12 +500,14 @@ if (iconList) {
 
 // --- Small extras -------------------------------------------------------------
 
-// Clicking an address bar selects the whole URL for easy copying.
-document.querySelectorAll<HTMLInputElement>('input[data-address]').forEach((input) => {
-  input.addEventListener('focus', () => input.select());
-});
+function initExtras() {
+  // Clicking an address bar selects the whole URL for easy copying.
+  document.querySelectorAll<HTMLInputElement>('input[data-address]').forEach((input) => {
+    input.addEventListener('focus', () => input.select());
+  });
 
-// Dismissable balloon tips.
-document.querySelectorAll<HTMLElement>('[data-balloon]').forEach((balloon) => {
-  balloon.querySelector('[data-balloon-close]')?.addEventListener('click', () => balloon.remove());
-});
+  // Dismissable balloon tips.
+  document.querySelectorAll<HTMLElement>('[data-balloon]').forEach((balloon) => {
+    balloon.querySelector('[data-balloon-close]')?.addEventListener('click', () => balloon.remove());
+  });
+}

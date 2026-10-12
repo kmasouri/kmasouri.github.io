@@ -43,12 +43,15 @@ const items = [
 </Desktop>
 
 <script>
-  const button = document.querySelector<HTMLButtonElement>('[data-empty-bin]');
-  button?.addEventListener('click', () => {
-    document.querySelector('[data-bin-list]')?.remove();
-    document.querySelector<HTMLElement>('[data-bin-empty]')!.hidden = false;
-    document.querySelector('[data-bin-count]')!.textContent = '0 object(s)';
-    button.disabled = true;
+  // Runs on every visit: pages swap in place, so module code only runs once.
+  document.addEventListener('astro:page-load', () => {
+    const button = document.querySelector<HTMLButtonElement>('[data-empty-bin]');
+    button?.addEventListener('click', () => {
+      document.querySelector('[data-bin-list]')?.remove();
+      document.querySelector<HTMLElement>('[data-bin-empty]')!.hidden = false;
+      document.querySelector('[data-bin-count]')!.textContent = '0 object(s)';
+      button.disabled = true;
+    });
   });
 </script>
 

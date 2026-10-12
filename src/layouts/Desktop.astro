@@ -1,5 +1,6 @@
 ---
 import 'xp.css/dist/XP.css';
+import { ClientRouter } from 'astro:transitions';
 import '../styles/global.css';
 import DesktopIcons from '../components/DesktopIcons.astro';
 import Taskbar, { type Task } from '../components/Taskbar.astro';
@@ -24,7 +25,7 @@ const ogImage = new URL('/og.png', Astro.site);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate="none">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -47,6 +48,10 @@ const ogImage = new URL('/og.png', Astro.site);
     {article && <meta property="article:published_time" content={article.published.toISOString()} />}
     {article?.tags.map((tag) => <meta property="article:tag" content={tag} />)}
     <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- Opening an icon or link swaps the page in place (no full reload);
+         every page still has its own URL and works without JavaScript. -->
+    <ClientRouter />
 
     <script is:inline define:vars={{ boot }}>
       // Runs before first paint: flag JS support, and decide whether the BIOS

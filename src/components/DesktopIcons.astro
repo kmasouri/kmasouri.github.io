@@ -9,7 +9,7 @@ const icons = [
 ];
 ---
 
-<nav class="desktop-icons" aria-label="Desktop">
+<nav class="desktop-icons" aria-label="Desktop" transition:persist="desktop-icons">
   <ul>
     {
       icons.map(({ label, href, icon, external }) => (
