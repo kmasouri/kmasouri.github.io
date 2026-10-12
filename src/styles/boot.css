@@ -49,7 +49,7 @@ html.booting .boot {
   image-rendering: pixelated;
 }
 
-.boot-energy {
+.boot-badge {
   position: absolute;
   top: max(16px, 3vh);
   right: max(16px, 4vw);
@@ -57,7 +57,7 @@ html.booting .boot {
   text-align: center;
 }
 
-.boot-energy img {
+.boot-badge img {
   display: block;
   width: 100%;
   height: auto;
@@ -65,7 +65,7 @@ html.booting .boot {
   image-rendering: pixelated;
 }
 
-.boot-energy span {
+.boot-badge span {
   display: block;
   margin-top: 0.3em;
   color: #00ff00;
