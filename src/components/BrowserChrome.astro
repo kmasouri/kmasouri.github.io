@@ -2,8 +2,9 @@
 /**
  * Internet Explorer 6's chrome for post windows: menu bar, Standard Buttons
  * (Back, Forward, Stop, Refresh, Home | Search, Favorites, History | Print)
- * and the Address bar with Go and Links. Back, Refresh, Home, Go and Print
- * work; the rest are decorative, like the menu bar.
+ * and the Address bar with Go and Links. Back and Forward follow your history
+ * on the site (see desktop.ts); Refresh, Home, Go and Print work; the rest are
+ * decorative, like the menu bar.
  */
 interface Props {
   /** Where Back goes. */
@@ -20,14 +21,14 @@ const { back, path, url } = Astro.props;
 <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
 
 <nav class="toolbar xp-toolbar ie-toolbar" aria-label="Browser">
-  <a class="tb-btn" href={back}>
+  <a class="tb-btn" href={back} data-history="back">
     <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M14.5 7.5 9 13l5.5 5.5M9.5 13H19" /></svg>
     <span>Back</span><span class="tb-caret" aria-hidden="true"></span>
   </a>
-  <span class="tb-btn is-off" aria-hidden="true">
-    <svg class="tb-nav" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12" /><path d="M11.5 7.5 17 13l-5.5 5.5M16.5 13H7" /></svg>
-    <span class="tb-caret"></span>
-  </span>
+  <button class="tb-btn is-off" type="button" data-history="forward" aria-label="Forward" disabled>
+    <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M11.5 7.5 17 13l-5.5 5.5M16.5 13H7" /></svg>
+    <span class="tb-caret" aria-hidden="true"></span>
+  </button>
   <span class="tb-btn is-deco" aria-hidden="true" title="Stop">
     <svg class="tb-page" viewBox="0 0 24 24"><path class="sheet" d="M5 2.5h10l4 4V21.5H5z" /><path class="fold" d="M15 2.5v4h4" /><path class="stop" d="M9.5 10.5l5 5m0-5-5 5" /></svg>
   </span>

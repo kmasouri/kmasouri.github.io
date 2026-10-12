@@ -1,8 +1,9 @@
 ---
 /**
  * XP Explorer's standard buttons: Back, Forward, Up | Search, Folders | Views.
- * Back and Up are plain links (they work without JavaScript). Forward is shown
- * greyed out, the way XP shows it with nothing to go forward to. Search and
+ * Back and Forward follow your history on the site (desktop.ts greys them out
+ * until there is somewhere to go); without JavaScript, Back links to `back`.
+ * Up is a plain link to the parent. Search and
  * Views are decorative, like the menu bar. Folders hides or shows the task
  * pane when the window has one.
  *
@@ -20,14 +21,14 @@ const { back, up, label = 'Folder', folders = false } = Astro.props;
 ---
 
 <nav class="toolbar xp-toolbar" aria-label={label}>
-  <a class="tb-btn" href={back}>
+  <a class="tb-btn" href={back} data-history="back">
     <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M14.5 7.5 9 13l5.5 5.5M9.5 13H19" /></svg>
     <span>Back</span><span class="tb-caret" aria-hidden="true"></span>
   </a>
-  <span class="tb-btn is-off" aria-hidden="true">
-    <svg class="tb-nav" viewBox="0 0 26 26"><circle cx="13" cy="13" r="12" /><path d="M11.5 7.5 17 13l-5.5 5.5M16.5 13H7" /></svg>
-    <span class="tb-caret"></span>
-  </span>
+  <button class="tb-btn is-off" type="button" data-history="forward" aria-label="Forward" disabled>
+    <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M11.5 7.5 17 13l-5.5 5.5M16.5 13H7" /></svg>
+    <span class="tb-caret" aria-hidden="true"></span>
+  </button>
   <a class="tb-btn" href={up} title="Up"><img src="/icons/up.png" alt="" width="24" height="24" /><span class="sr-only">Up</span></a>
   <span class="tb-sep" aria-hidden="true"></span>
   <span class="tb-btn is-deco" aria-hidden="true"><img src="/icons/search.png" alt="" width="24" height="24" /><span>Search</span></span>

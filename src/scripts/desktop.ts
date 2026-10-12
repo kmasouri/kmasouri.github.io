@@ -22,6 +22,7 @@ document.addEventListener('astro:before-swap', (event) => {
 document.addEventListener('astro:page-load', initPage);
 
 function initPage() {
+  initHistoryButtons();
   tick();
   initStartMenu();
   initTurnOff();
@@ -29,6 +30,53 @@ function initPage() {
   initSelectionBoxes();
   initDesktopIcons();
   initExtras();
+}
+
+// --- Back / Forward ------------------------------------------------------------
+
+// Window toolbars' Back and Forward work like a real browser's: greyed out
+// until you've moved around the site. Astro's router numbers history entries
+// (history.state.index: 0 where you arrived, +1 per in-site move); we also
+// remember the furthest entry reached, so Forward knows if there's one ahead.
+const HISTORY_KEY = 'xp:history-max';
+let lastNavigation = '';
+document.addEventListener('astro:before-preparation', (event) => {
+  lastNavigation = event.navigationType;
+});
+
+function historyPosition() {
+  const index: number = history.state?.index ?? 0;
+  let max = index;
+  try {
+    const stored = Number(sessionStorage.getItem(HISTORY_KEY) ?? index);
+    // A fresh navigation (a link, or a new page load) drops anything ahead of
+    // us, like a browser does; going back/forward or reloading keeps it.
+    const loadType = (performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined)?.type;
+    const fresh = lastNavigation ? lastNavigation === 'push' : loadType === 'navigate';
+    max = fresh ? index : Math.max(stored, index);
+    sessionStorage.setItem(HISTORY_KEY, String(max));
+  } catch {
+    /* ignore */
+  }
+  return { canBack: index > 0, canForward: index < max };
+}
+
+function initHistoryButtons() {
+  const { canBack, canForward } = historyPosition();
+  document.querySelectorAll<HTMLElement>('[data-history]').forEach((el) => {
+    const back = el.dataset.history === 'back';
+    const enabled = back ? canBack : canForward;
+    el.classList.toggle('is-off', !enabled);
+    if (el instanceof HTMLButtonElement) el.disabled = !enabled;
+    else el.setAttribute('aria-disabled', String(!enabled));
+    if (!enabled) el.setAttribute('tabindex', '-1');
+    else el.removeAttribute('tabindex');
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (back && canBack) history.back();
+      else if (!back && canForward) history.forward();
+    });
+  });
 }
 
 // --- Clock -----------------------------------------------------------------
