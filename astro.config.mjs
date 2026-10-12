@@ -7,7 +7,9 @@ export default defineConfig({
   // User sites (<username>.github.io) are served from the domain root,
   // so no `base` is needed.
   site: 'https://kmasouri.github.io',
-  trailingSlash: 'always',
+  // GitHub Pages adds the trailing slash itself; 'ignore' lets the dev server
+  // accept /about and /about/ alike instead of showing Astro's warning page.
+  trailingSlash: 'ignore',
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/recycle-bin/') && !page.includes('/welcome/'),
