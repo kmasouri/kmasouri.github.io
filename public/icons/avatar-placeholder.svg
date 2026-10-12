@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Placeholder until there's a real profile picture. -->
+  <rect width="48" height="48" fill="#dfe6f1"/>
+  <circle cx="24" cy="18" r="9" fill="#9aa8bd"/>
+  <path d="M7 48c1.5-10 8.5-16 17-16s15.5 6 17 16z" fill="#9aa8bd"/>
+</svg>
