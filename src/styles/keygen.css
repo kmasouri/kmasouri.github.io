@@ -19,38 +19,12 @@
   font: 11px Tahoma, 'Segoe UI', sans-serif;
 }
 
-.keygen-release {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 26px;
-  margin-bottom: 7px;
-  padding: 0 5px 0 9px;
-  border: 1px solid #aca899;
-  border-top-color: #fff;
-  border-left-color: #fff;
-  background: #f3f1e7;
-}
-
-.keygen-release a {
-  min-width: 0;
-  overflow: hidden;
-  color: #3131a2;
-  font-size: 11px;
-  text-decoration: underline;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.keygen-release-close {
-  width: 20px;
-  height: 20px;
-  padding: 0;
-  border: 1px solid #aca899;
-  background: #ece9d8;
-  color: #555;
-  font: 13px/16px Tahoma, sans-serif;
-  text-align: center;
+.keygen-banner {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid;
+  border-color: #aca899 #fff #fff #aca899;
 }
 
 .keygen-form {

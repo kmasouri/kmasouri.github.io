@@ -46,7 +46,7 @@ function initKeygen() {
 
   form.addEventListener('submit', (event) => {
     event.preventDefault();
-    serial.value = `AC43-${randomBlock()}-${randomBlock()}-${randomBlock()}-${randomBlock()}`;
+    serial.value = Array.from({ length: 5 }, randomBlock).join('-');
     message('Serial generated. This key intentionally activates nothing.');
     void play();
   });
