@@ -73,9 +73,8 @@ function initKeygen() {
   aboutOpen.addEventListener('click', () => about.showModal());
   aboutClose.addEventListener('click', () => about.close());
 
-  document.addEventListener('astro:before-swap', () => {
-    audio.pause();
-  }, { once: true });
+  // The window stays open while you browse other pages; stop when it closes.
+  shell.closest('[data-window]')?.addEventListener('xp:close', () => audio.pause());
 }
 
 document.addEventListener('astro:page-load', initKeygen);

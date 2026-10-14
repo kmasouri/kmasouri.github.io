@@ -21,6 +21,103 @@ document.addEventListener('astro:before-swap', (event) => {
 });
 document.addEventListener('astro:page-load', initPage);
 
+// Windows that stay open across page swaps keep their listeners, so anything
+// wired up in initPage goes through this to bind each element only once.
+const bound = new WeakMap<Element, Set<string>>();
+function bindOnce(el: Element, key: string) {
+  const keys = bound.get(el) ?? new Set<string>();
+  if (keys.has(key)) return false;
+  keys.add(key);
+  bound.set(el, keys);
+  return true;
+}
+
+// --- Several windows at once -----------------------------------------------------
+
+// Opening a page adds its window to the desktop instead of replacing the ones
+// already open. Every window remembers its own URL and the address bar always
+// shows the front one's, so a copied link opens exactly that window.
+// Windows are keyed by id, one per program: opening a post while another post
+// is open loads it into the same Internet Explorer window, like a browser.
+let arrival: { front: string | null } | undefined;
+
+const samePath = (a: string, b: string) => a.replace(/\/+$/, '') === b.replace(/\/+$/, '');
+
+document.addEventListener('astro:before-swap', (event) => {
+  const newLayer = event.newDocument.querySelector('.window-layer');
+  if (!newLayer || !event.newDocument.querySelector('.task-list')) return; // not a desktop page
+
+  // A page's own styles (keygen.css, a page's <style>) only come with that
+  // page, and the router drops whatever the next page doesn't use. Its window
+  // can stay open, so carry every current style over to the incoming page.
+  const newHead = event.newDocument.head;
+  const newStyles = new Set([...newHead.querySelectorAll('style')].map((s) => s.textContent));
+  document.head.querySelectorAll<HTMLElement>('link[rel="stylesheet"], style').forEach((el, i) => {
+    if (el instanceof HTMLLinkElement && newHead.querySelector(`link[rel="stylesheet"][href="${el.getAttribute('href')}"]`)) return;
+    if (el instanceof HTMLStyleElement && newStyles.has(el.textContent)) return;
+    const key = el.getAttribute('data-astro-transition-persist') ?? `xp-style-${Date.now()}-${i}`;
+    el.setAttribute('data-astro-transition-persist', key);
+    if (!newHead.querySelector(`[data-astro-transition-persist="${key}"]`)) newHead.append(el.cloneNode(true));
+  });
+
+  const url = event.to.pathname;
+  const incoming =[...newLayer.querySelectorAll<HTMLElement>('[data-window]')];
+  incoming.forEach((win) => (win.dataset.url = url));
+  arrival = { front: incoming[0]?.id ?? null };
+
+  // In taskbar order, which stays put however the windows are stacked.
+  const plan = [...document.querySelectorAll<HTMLElement>('.task-list .task-button')]
+    .map((button) => document.getElementById(button.dataset.task ?? ''))
+    .filter((win): win is HTMLElement => !!win?.matches('[data-window]:not(.is-closing)'))
+    .map((win) => {
+      const li = taskButtonFor(win)?.closest('li') ?? null;
+      const replacement = incoming.find((w) => w.id === win.id);
+      // Already showing this page (or a different program): keep it as it is.
+      if (!replacement || samePath(win.dataset.url ?? '', url)) return { win, li, keep: true };
+      // Same program, new page: the new content takes over its place and size.
+      for (const prop of ['width', 'height', 'maxHeight', 'zIndex'] as const) {
+        replacement.style[prop] = win.style[prop];
+      }
+      if (desktopQuery.matches) {
+        replacement.style.left = `${win.offsetLeft}px`;
+        replacement.style.top = `${win.offsetTop}px`;
+      }
+      if (win.classList.contains('is-maximized')) {
+        replacement.classList.add('is-maximized');
+        replacement.querySelector('[data-action="maximize"]')?.setAttribute('aria-label', 'Restore');
+      }
+      return { win, li, keep: false };
+    });
+  if (!plan.length) return;
+
+  const swap = event.swap;
+  event.swap = () => {
+    swap();
+    const layer = document.querySelector('.window-layer')!;
+    const tasks = document.querySelector('.task-list')!;
+    const newItem = (id: string) => tasks.querySelector(`.task-button[data-task="${id}"]`)?.closest('li') ?? null;
+    const items: Element[] = [];
+    for (const { win, li, keep } of plan) {
+      if (keep) {
+        const fresh = document.getElementById(win.id);
+        if (fresh) fresh.replaceWith(win);
+        else layer.append(win);
+        if (li) items.push(li);
+      } else {
+        win.dispatchEvent(new Event('xp:close'));
+        const item = newItem(win.id);
+        if (item) items.push(item);
+      }
+    }
+    // Taskbar order: windows that were already open, then the new one.
+    const planned = new Set(plan.map(({ win }) => win.id));
+    const added = [...tasks.children].filter(
+      (li) => !planned.has(li.querySelector<HTMLElement>('.task-button')?.dataset.task ?? ''),
+    );
+    tasks.replaceChildren(...items, ...added);
+  };
+});
+
 function initPage() {
   initHistoryButtons();
   tick();
@@ -123,20 +220,23 @@ function historyPosition() {
   return { canBack: index > 0, canForward: index < max };
 }
 
+let historyNav = { canBack: false, canForward: false };
+
 function initHistoryButtons() {
-  const { canBack, canForward } = historyPosition();
+  historyNav = historyPosition();
   document.querySelectorAll<HTMLElement>('[data-history]').forEach((el) => {
     const back = el.dataset.history === 'back';
-    const enabled = back ? canBack : canForward;
+    const enabled = back ? historyNav.canBack : historyNav.canForward;
     el.classList.toggle('is-off', !enabled);
     if (el instanceof HTMLButtonElement) el.disabled = !enabled;
     else el.setAttribute('aria-disabled', String(!enabled));
     if (!enabled) el.setAttribute('tabindex', '-1');
     else el.removeAttribute('tabindex');
+    if (!bindOnce(el, 'history')) return;
     el.addEventListener('click', (event) => {
       event.preventDefault();
-      if (back && canBack) history.back();
-      else if (!back && canForward) history.forward();
+      if (back && historyNav.canBack) history.back();
+      else if (!back && historyNav.canForward) history.forward();
     });
   });
 }
@@ -241,6 +341,29 @@ function activate(win: HTMLElement) {
     w.classList.toggle('is-inactive', w !== win);
     taskButtonFor(w)?.setAttribute('aria-pressed', String(w === win && !w.hidden));
   });
+  syncAddress();
+}
+
+/** The visible window in front, if any. */
+function frontWindow() {
+  return windows
+    .filter((w) => !w.hidden && w.isConnected)
+    .sort((a, b) => Number(b.style.zIndex || 0) - Number(a.style.zIndex || 0))[0];
+}
+
+/** Point the address bar and tab title at the front window (or the desktop). */
+function syncAddress() {
+  const front = frontWindow();
+  const url = front?.dataset.url ?? '/';
+  if (!samePath(location.pathname, url)) history.replaceState(history.state, '', url);
+  document.title = front?.dataset.title ?? document.getElementById('desktop')?.dataset.homeTitle ?? document.title;
+}
+
+/** Bring the next window forward, as XP does when one is minimized or closed. */
+function activateNext() {
+  const next = frontWindow();
+  if (next) activate(next);
+  else syncAddress();
 }
 
 function minimize(win: HTMLElement) {
@@ -248,6 +371,15 @@ function minimize(win: HTMLElement) {
   const button = taskButtonFor(win);
   button?.setAttribute('aria-pressed', 'false');
   button?.focus();
+  activateNext();
+}
+
+function closeWindow(win: HTMLElement) {
+  win.dispatchEvent(new Event('xp:close'));
+  taskButtonFor(win)?.closest('li')?.remove();
+  win.remove();
+  windows = windows.filter((w) => w !== win);
+  activateNext();
 }
 
 function restore(win: HTMLElement) {
@@ -265,16 +397,25 @@ function toggleMaximize(win: HTMLElement) {
 function initWindows() {
   windows = [...document.querySelectorAll<HTMLElement>('[data-window]')];
   for (const win of windows) {
+    win.dataset.url ??= location.pathname;
+    win.dataset.title ??= document.title;
+    if (!bindOnce(win, 'window')) continue;
     win.querySelector('[data-action="minimize"]')?.addEventListener('click', () => minimize(win));
     win.querySelector('[data-action="maximize"]')?.addEventListener('click', () => toggleMaximize(win));
     win.addEventListener('pointerdown', () => activate(win));
     win.addEventListener('focusin', () => activate(win));
 
-    // Close: go back to the desktop (or wherever closeHref points) without the
+    // Close: with other windows open, just remove this one. Closing the last
+    // goes to wherever closeHref points (the desktop by default) without the
     // trailing "?" a GET form would add.
     const closeForm = win.querySelector<HTMLFormElement>('[data-close-form]');
     closeForm?.addEventListener('submit', (event) => {
       event.preventDefault();
+      if (windows.some((w) => w !== win)) {
+        closeWindow(win);
+        return;
+      }
+      win.dispatchEvent(new Event('xp:close'));
       win.classList.add('is-closing');
       navigate(closeForm.getAttribute('action') || '/');
     });
@@ -296,7 +437,36 @@ function initWindows() {
     });
   }
 
-  if (windows.length) activate(windows[windows.length - 1]);
+  // After a page swap, bring the page's own window forward; a page without
+  // one (the desktop) minimizes everything, like Show Desktop.
+  const arrived = arrival;
+  arrival = undefined;
+  if (!arrived) {
+    if (windows.length) activate(windows[windows.length - 1]);
+  } else if (arrived.front && document.getElementById(arrived.front)) {
+    const front = document.getElementById(arrived.front)!;
+    front.hidden = false;
+    cascade(front);
+    activate(front);
+  } else {
+    for (const win of windows) {
+      win.hidden = true;
+      taskButtonFor(win)?.setAttribute('aria-pressed', 'false');
+    }
+    syncAddress();
+  }
+}
+
+// A newly opened window steps down and right of the others, as XP cascades
+// them, so it doesn't land exactly on top of one that's already open.
+function cascade(win: HTMLElement) {
+  if (!desktopQuery.matches || win.style.left || win.classList.contains('is-maximized')) return;
+  const others = windows.filter((w) => w !== win && !w.hidden).length;
+  if (!others) return;
+  const area = win.offsetParent as HTMLElement;
+  const step = 28 * (others % 6);
+  win.style.left = `${Math.min(win.offsetLeft + step, Math.max(0, area.clientWidth - win.offsetWidth))}px`;
+  win.style.top = `${Math.min(win.offsetTop + step, Math.max(0, area.clientHeight - win.offsetHeight))}px`;
 }
 
 function makeDraggable(win: HTMLElement, handle: HTMLElement) {
@@ -490,7 +660,7 @@ function initSelectionBoxes() {
     enableSelectionBox(desktopArea, '.desktop-icon', (t) => !t.closest('.desktop-icon, .xp-window, .balloon'));
   }
   document.querySelectorAll<HTMLElement>('.file-pane').forEach((pane) => {
-    enableSelectionBox(pane, '.file-list > li', (t) => !t.closest('a, button, input'));
+    if (bindOnce(pane, 'selection')) enableSelectionBox(pane, '.file-list > li', (t) => !t.closest('a, button, input'));
   });
 }
 
@@ -672,14 +842,17 @@ function initDesktopIcons() {
 function initExtras() {
   // Clicking an address bar selects the whole URL for easy copying.
   document.querySelectorAll<HTMLInputElement>('input[data-address]').forEach((input) => {
-    input.addEventListener('focus', () => input.select());
+    if (bindOnce(input, 'address')) input.addEventListener('focus', () => input.select());
   });
 
   // Internet Explorer's Print button.
-  document.querySelectorAll('[data-print]').forEach((button) => button.addEventListener('click', () => window.print()));
+  document.querySelectorAll('[data-print]').forEach((button) => {
+    if (bindOnce(button, 'print')) button.addEventListener('click', () => window.print());
+  });
 
   // Explorer's Folders button: hide or show the task pane.
   document.querySelectorAll<HTMLButtonElement>('[data-toggle-tasks]').forEach((button) => {
+    if (!bindOnce(button, 'folders')) return;
     const explorer = button.closest('.xp-window')?.querySelector('.explorer');
     button.addEventListener('click', () => {
       const hidden = explorer?.classList.toggle('hide-tasks') ?? false;

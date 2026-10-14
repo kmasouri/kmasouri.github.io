@@ -54,7 +54,7 @@ export function openSetup(host: HTMLElement, info: SetupInfo, onExit: () => void
         { kind: 'gap' },
         { kind: 'info', label: 'Processor', value: 'PENTIUM-MMX 233MHz' },
         { kind: 'info', label: 'Total Memory', value: '262144 KB' },
-        { kind: 'info', label: 'Blog Posts', value: String(info.posts) },
+        { kind: 'info', label: 'Posts', value: String(info.posts) },
         { kind: 'info', label: 'Input Devices', value: '1 Keyboard, 1 Mouse' },
         { kind: 'gap' },
         {
@@ -94,9 +94,9 @@ export function openSetup(host: HTMLElement, info: SetupInfo, onExit: () => void
     {
       name: 'Boot',
       items: [
-        opt('1st Boot Device', ['BLOG-HDD', 'CD-ROM 52X', 'Floppy A:', 'Network'], 0, 'Device to try first. The blog lives on BLOG-HDD.'),
-        opt('2nd Boot Device', ['CD-ROM 52X', 'Floppy A:', 'Network', 'BLOG-HDD'], 0, 'Tried if the first device has nothing to boot.'),
-        opt('3rd Boot Device', ['Floppy A:', 'Network', 'BLOG-HDD', 'CD-ROM 52X'], 0, 'Last resort.'),
+        opt('1st Boot Device', ['KM-HDD', 'CD-ROM 52X', 'Floppy A:', 'Network'], 0, 'Device to try first. The site lives on KM-HDD.'),
+        opt('2nd Boot Device', ['CD-ROM 52X', 'Floppy A:', 'Network', 'KM-HDD'], 0, 'Tried if the first device has nothing to boot.'),
+        opt('3rd Boot Device', ['Floppy A:', 'Network', 'KM-HDD', 'CD-ROM 52X'], 0, 'Last resort.'),
         { kind: 'gap' },
         opt('Quick Boot', ['Enabled', 'Disabled'], 0, 'Skips the memory test. The memory test is the best part, so this does nothing.'),
         opt('Boot Up NumLock State', ['On', 'Off'], 0, 'NumLock on at startup.'),
@@ -124,7 +124,7 @@ export function openSetup(host: HTMLElement, info: SetupInfo, onExit: () => void
         { kind: 'action', label: 'Load Optimized Defaults', help: 'Put every setting back the way it shipped.', run: () => confirmDefaults() },
         { kind: 'gap' },
         { kind: 'heading', label: 'Boot Override' },
-        { kind: 'action', label: 'BLOG-HDD', help: 'Boot from this device right now.', run: () => exit() },
+        { kind: 'action', label: 'KM-HDD', help: 'Boot from this device right now.', run: () => exit() },
       ],
     },
   ];

@@ -22,27 +22,27 @@ const { back, path, url } = Astro.props;
 
 <nav class="toolbar xp-toolbar ie-toolbar" aria-label="Browser">
   <a class="tb-btn" href={back} data-history="back">
-    <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M14.5 7.5 9 13l5.5 5.5M9.5 13H19" /></svg>
+    <img src="/icons/tb-back.png" alt="" width="24" height="24" />
     <span>Back</span><span class="tb-caret" aria-hidden="true"></span>
   </a>
   <button class="tb-btn is-off" type="button" data-history="forward" aria-label="Forward" disabled>
-    <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M11.5 7.5 17 13l-5.5 5.5M16.5 13H7" /></svg>
+    <img src="/icons/tb-forward.png" alt="" width="24" height="24" />
     <span class="tb-caret" aria-hidden="true"></span>
   </button>
   <span class="tb-btn is-deco" aria-hidden="true" title="Stop">
-    <svg class="tb-page" viewBox="0 0 24 24"><path class="sheet" d="M5 2.5h10l4 4V21.5H5z" /><path class="fold" d="M15 2.5v4h4" /><path class="stop" d="M9.5 10.5l5 5m0-5-5 5" /></svg>
+    <img src="/icons/tb-stop.png" alt="" width="24" height="24" />
   </span>
   <a class="tb-btn" href={path} title="Refresh">
-    <svg class="tb-page" viewBox="0 0 24 24" aria-hidden="true"><path class="sheet" d="M5 2.5h10l4 4V21.5H5z" /><path class="fold" d="M15 2.5v4h4" /><path class="spin" d="M15.5 11a3.6 3.6 0 1 0 .6 3.2" /><path class="spin-head" d="M16.4 8.6v2.9h-2.9" /></svg>
+    <img src="/icons/tb-refresh.png" alt="" width="24" height="24" />
     <span class="sr-only">Refresh</span>
   </a>
-  <a class="tb-btn" href="/" title="Home"><img src="/icons/home.png" alt="" width="24" height="24" /><span class="sr-only">Home</span></a>
+  <a class="tb-btn" href="/" title="Home"><img src="/icons/tb-home.png" alt="" width="24" height="24" /><span class="sr-only">Home</span></a>
   <span class="tb-sep" aria-hidden="true"></span>
-  <span class="tb-btn is-deco" aria-hidden="true"><img src="/icons/search.png" alt="" width="24" height="24" /><span>Search</span></span>
-  <span class="tb-btn is-deco" aria-hidden="true"><img src="/icons/favorites.png" alt="" width="24" height="24" /><span>Favorites</span></span>
-  <span class="tb-btn is-deco" aria-hidden="true" title="History"><img src="/icons/history.png" alt="" width="24" height="24" /></span>
+  <span class="tb-btn is-deco" aria-hidden="true"><img src="/icons/tb-search.png" alt="" width="24" height="24" /><span>Search</span></span>
+  <span class="tb-btn is-deco" aria-hidden="true"><img src="/icons/tb-favorites.png" alt="" width="24" height="24" /><span>Favorites</span></span>
+  <span class="tb-btn is-deco" aria-hidden="true" title="History"><img src="/icons/tb-history.png" alt="" width="24" height="24" /></span>
   <span class="tb-sep" aria-hidden="true"></span>
-  <button class="tb-btn" type="button" data-print title="Print"><img src="/icons/print.png" alt="" width="24" height="24" /><span class="sr-only">Print</span></button>
+  <button class="tb-btn" type="button" data-print title="Print"><img src="/icons/tb-print.png" alt="" width="24" height="24" /><span class="sr-only">Print</span></button>
 </nav>
 
 <div class="addressbar ie-addressbar">
@@ -53,7 +53,7 @@ const { back, path, url } = Astro.props;
     <span class="ie-drop" aria-hidden="true"></span>
   </span>
   <a class="ie-go" href={path}>
-    <svg viewBox="0 0 16 16" aria-hidden="true"><rect x=".5" y=".5" width="15" height="15" rx="2" /><path d="M4 8h7M8 4.5 11.5 8 8 11.5" /></svg>
+    <img src="/icons/icon-placeholder.svg" alt="" width="18" height="18" />
     <span>Go</span>
   </a>
   <span class="ie-links" aria-hidden="true">Links <span>&raquo;</span></span>

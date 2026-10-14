@@ -1,7 +1,7 @@
 ---
 title: "Markdown Cheat Sheet (Copy Me!)"
 date: 2026-09-28
-description: "A template post showing every bit of Markdown formatting this blog supports."
+description: "A template post showing every bit of Markdown formatting this site supports."
 tags: [template, markdown]
 draft: false
 ---
@@ -55,7 +55,7 @@ function boot() {
 
 ## Images
 
-Put images in `src/assets/blog/` and link them with a relative path. Always add
+Put images in `src/assets/posts/` and link them with a relative path. Always add
 alt text in the square brackets. It's what screen readers read aloud.
 
 ![A green hill with a golden wheat field on top, under a clear blue sky](/wallpaper.webp)

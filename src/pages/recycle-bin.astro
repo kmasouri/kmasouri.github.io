@@ -5,58 +5,87 @@ import ExplorerToolbar from '../components/ExplorerToolbar.astro';
 
 const icon = '/icons/recycle-bin.png';
 const items = [
-  { name: 'blog-export-FINAL-final.zip', from: 'C:\\My Documents', icon: '/icons/folder.png' },
-  { name: 'blog-redesign-v1 (abandoned).html', from: 'C:\\My Documents\\Projects', icon: '/icons/page.png' },
+  { name: 'site-export-FINAL-final.zip', from: 'C:\\My Documents', icon: '/icons/folder.png' },
+  { name: 'site-redesign-v1 (abandoned).html', from: 'C:\\My Documents\\Projects', icon: '/icons/page.png' },
   { name: 'untitled-draft-47.txt', from: 'C:\\Desktop', icon: '/icons/notepad.png' },
   { name: 'New Folder (7)', from: 'C:\\Desktop', icon: '/icons/folder.png' },
 ];
 ---
 
 <Desktop title="Recycle Bin" description="Things that didn't make the cut." noindex tasks={[{ id: 'bin-window', title: 'Recycle Bin', icon }]}>
-  <XPWindow id="bin-window" title="Recycle Bin" icon={icon} width="620px">
+  <XPWindow id="bin-window" title="Recycle Bin" icon={icon} width="780px">
     <div slot="chrome">
       <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
-      <ExplorerToolbar back="/" up="/">
-        <span class="tb-sep" aria-hidden="true"></span>
-        <button type="button" data-empty-bin>Empty Recycle Bin</button>
-      </ExplorerToolbar>
+      <ExplorerToolbar back="/" folders />
+      <div class="addressbar">
+        <span class="addressbar-label">Address</span>
+        <span class="addressbar-field"><img src={icon} alt="" width="16" height="16" />Recycle Bin</span>
+      </div>
     </div>
-    <div class="file-pane">
-      <h1>Recycle Bin</h1>
-      <ul class="file-list" data-bin-list>
-        {
-          items.map((item) => (
-            <li>
-              <img src={item.icon} alt="" width="40" height="40" />
-              <span class="file-title">{item.name}</span>
-              <p class="file-desc">Original location: {item.from}</p>
-            </li>
-          ))
-        }
-      </ul>
-      <p class="empty-note" data-bin-empty hidden>The Recycle Bin is empty.</p>
+
+    <div class="explorer">
+      <div class="task-pane">
+        <section data-bin-tasks>
+          <h2>Recycle Bin Tasks</h2>
+          <ul>
+            <li><button type="button" class="task-link" data-bin-action="Empty"><img src={icon} alt="" width="16" height="16" /> Empty the Recycle Bin</button></li>
+            <li><button type="button" class="task-link" data-bin-action="Restore"><img src="/icons/up.png" alt="" width="16" height="16" /> Restore all items</button></li>
+          </ul>
+        </section>
+        <section>
+          <h2>Other Places</h2>
+          <ul>
+            <li><a href="/"><img src="/icons/home.png" alt="" width="16" height="16" /> Desktop</a></li>
+            <li><a href="/posts/"><img src="/icons/folder.png" alt="" width="16" height="16" /> My Documents</a></li>
+          </ul>
+        </section>
+        <section>
+          <h2>Details</h2>
+          <p><strong>Recycle Bin</strong><br />System Folder<br /><span data-bin-count>{items.length} object(s)</span></p>
+        </section>
+      </div>
+
+      <div class="file-pane">
+        <h1>Recycle Bin</h1>
+        <ul class="file-list" data-bin-list>
+          {
+            items.map((item) => (
+              <li>
+                <img src={item.icon} alt="" width="40" height="40" />
+                <span class="file-title">{item.name}</span>
+                <p class="file-desc">Original location: {item.from}</p>
+              </li>
+            ))
+          }
+        </ul>
+        <p class="empty-note" data-bin-empty hidden>The Recycle Bin is empty.</p>
+      </div>
     </div>
+
     <div slot="status" class="status-bar">
       <p class="status-bar-field" data-bin-count>{items.length} object(s)</p>
+      <p class="status-bar-field">My Computer</p>
     </div>
   </XPWindow>
 </Desktop>
 
 <script>
   // Runs on every visit: pages swap in place, so module code only runs once.
+  // Emptying or restoring both leave the bin empty.
   document.addEventListener('astro:page-load', () => {
-    const button = document.querySelector<HTMLButtonElement>('[data-empty-bin]');
-    button?.addEventListener('click', () => {
-      document.querySelector('[data-bin-list]')?.remove();
-      document.querySelector<HTMLElement>('[data-bin-empty]')!.hidden = false;
-      document.querySelector('[data-bin-count]')!.textContent = '0 object(s)';
-      button.disabled = true;
+    document.querySelectorAll<HTMLButtonElement>('[data-bin-action]').forEach((button) => {
+      button.onclick = () => {
+        document.querySelector('[data-bin-list]')?.remove();
+        document.querySelector<HTMLElement>('[data-bin-empty]')!.hidden = false;
+        document.querySelectorAll('[data-bin-count]').forEach((el) => (el.textContent = '0 object(s)'));
+        document.querySelectorAll<HTMLButtonElement>('[data-bin-action]').forEach((b) => (b.disabled = true));
+      };
     });
   });
 </script>
 
 <style>
-  html:not(.js) [data-empty-bin] {
+  html:not(.js) [data-bin-tasks] {
     display: none;
   }
 </style>

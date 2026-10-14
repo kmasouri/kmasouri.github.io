@@ -9,33 +9,33 @@ const posts = await getPosts();
 const icon = '/icons/folder.png';
 ---
 
-<Desktop title="My Blog" description={`All posts by ${AUTHOR}, newest first.`} tasks={[{ id: 'blog-window', title: 'My Blog', icon }]}>
-  <XPWindow id="blog-window" title="My Blog" icon={icon} width="780px" height="calc(100% - 48px)">
+<Desktop title="My Documents" description={`All posts by ${AUTHOR}, newest first.`} tasks={[{ id: 'documents-window', title: 'My Documents', icon }]}>
+  <XPWindow id="documents-window" title="My Documents" icon={icon} width="780px" height="calc(100% - 48px)">
     <div slot="chrome">
       <div class="menubar" aria-hidden="true"><span>File</span><span>Edit</span><span>View</span><span>Favorites</span><span>Tools</span><span>Help</span></div>
-      <ExplorerToolbar back="/" up="/" folders />
+      <ExplorerToolbar back="/" folders />
       <div class="addressbar">
         <span class="addressbar-label">Address</span>
-        <span class="addressbar-field"><img src={icon} alt="" width="16" height="16" />C:\Documents and Settings\{AUTHOR}\Desktop\My Blog</span>
+        <span class="addressbar-field"><img src={icon} alt="" width="16" height="16" />C:\Documents and Settings\{AUTHOR}\My Documents</span>
       </div>
     </div>
 
     <div class="explorer">
       <div class="task-pane">
         <section>
-          <h2>Blog Tasks</h2>
+          <h2>File and Folder Tasks</h2>
           <ul>
             <li><a href="/about/"><img src="/icons/notepad.png" alt="" width="16" height="16" /> About the author</a></li>
           </ul>
         </section>
         <section>
           <h2>Details</h2>
-          <p><strong>My Blog</strong><br />File Folder<br />{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+          <p><strong>My Documents</strong><br />File Folder<br />{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
         </section>
       </div>
 
       <div class="file-pane">
-        <h1>My Blog</h1>
+        <h1>My Documents</h1>
         {
           posts.length === 0 ? (
             <p class="empty-note">This folder is empty. Add a Markdown file to src/content/posts/.</p>

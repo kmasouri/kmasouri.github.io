@@ -91,7 +91,7 @@ const ogImage = new URL('/og.png', Astro.site);
     <a class="skip-link" href="#main">Skip to content</a>
     <slot name="boot" />
 
-    <div class="desktop" id="desktop">
+    <div class="desktop" id="desktop" data-home-title={SITE_TITLE}>
       <DesktopIcons />
       <main id="main" class="window-layer" tabindex="-1">
         <slot />

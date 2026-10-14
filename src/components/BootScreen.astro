@@ -55,6 +55,16 @@ const steps = [
 
   <button type="button" class="boot-skip" data-boot-skip>Press any key or click to skip</button>
 
+  <!-- After the BIOS: the operating system's startup screen. -->
+  <div class="boot-os" aria-hidden="true">
+    <div class="boot-os-logo">
+      <img src="/icons/logo-placeholder.svg" alt="" width="72" height="72" />
+      <span class="boot-os-word">{AUTHOR}<sup>os</sup></span>
+    </div>
+    <div class="boot-os-bar"><span></span><span></span><span></span></div>
+    <p class="boot-os-copy">Copyright &copy; 1985-2001 kmasouri Software, Inc.</p>
+  </div>
+
   <script type="application/json" id="boot-steps" set:html={JSON.stringify(steps)} />
 </div>
 

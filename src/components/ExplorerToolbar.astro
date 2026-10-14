@@ -3,51 +3,49 @@
  * XP Explorer's standard buttons: Back, Forward, Up | Search, Folders | Views.
  * Back and Forward follow your history on the site (desktop.ts greys them out
  * until there is somewhere to go); without JavaScript, Back links to `back`.
- * Up is a plain link to the parent. Search and
- * Views are decorative, like the menu bar. Folders hides or shows the task
- * pane when the window has one.
+ * Up, Search and Views are decorative, like the menu bar. Folders hides or
+ * shows the task pane when the window has one.
  *
  * Slot: extra buttons, added after the standard ones.
  */
 interface Props {
   back: string;
-  up: string;
   label?: string;
   /** Enable the Folders button (the window has a .task-pane). */
   folders?: boolean;
 }
 
-const { back, up, label = 'Folder', folders = false } = Astro.props;
+const { back, label = 'Folder', folders = false } = Astro.props;
 ---
 
 <nav class="toolbar xp-toolbar" aria-label={label}>
   <a class="tb-btn" href={back} data-history="back">
-    <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M14.5 7.5 9 13l5.5 5.5M9.5 13H19" /></svg>
+    <img src="/icons/tb-back.png" alt="" width="24" height="24" />
     <span>Back</span><span class="tb-caret" aria-hidden="true"></span>
   </a>
   <button class="tb-btn is-off" type="button" data-history="forward" aria-label="Forward" disabled>
-    <svg class="tb-nav" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="12" /><path d="M11.5 7.5 17 13l-5.5 5.5M16.5 13H7" /></svg>
+    <img src="/icons/tb-forward.png" alt="" width="24" height="24" />
     <span class="tb-caret" aria-hidden="true"></span>
   </button>
-  <a class="tb-btn" href={up} title="Up"><img src="/icons/up.png" alt="" width="24" height="24" /><span class="sr-only">Up</span></a>
+  <span class="tb-btn is-deco" aria-hidden="true" title="Up"><img src="/icons/tb-up.png" alt="" width="24" height="24" /></span>
   <span class="tb-sep" aria-hidden="true"></span>
-  <span class="tb-btn is-deco" aria-hidden="true"><img src="/icons/search.png" alt="" width="24" height="24" /><span>Search</span></span>
+  <span class="tb-btn is-deco" aria-hidden="true"><img src="/icons/tb-search.png" alt="" width="24" height="24" /><span>Search</span></span>
   {
     folders ? (
       <button class="tb-btn" type="button" data-toggle-tasks aria-pressed="false">
-        <img src="/icons/folder.png" alt="" width="24" height="24" />
+        <img src="/icons/tb-folders.png" alt="" width="24" height="24" />
         <span>Folders</span>
       </button>
     ) : (
       <span class="tb-btn is-deco" aria-hidden="true">
-        <img src="/icons/folder.png" alt="" width="24" height="24" />
+        <img src="/icons/tb-folders.png" alt="" width="24" height="24" />
         <span>Folders</span>
       </span>
     )
   }
   <span class="tb-sep" aria-hidden="true"></span>
   <span class="tb-btn is-deco" aria-hidden="true">
-    <svg class="tb-views" viewBox="0 0 24 24"><rect x="2.5" y="3.5" width="19" height="17" rx="1.5" /><path d="M2.5 7h19" /><g><rect x="5" y="9" width="3" height="3" fill="#d33" /><rect x="10.5" y="9" width="3" height="3" fill="#2a9d3a" /><rect x="16" y="9" width="3" height="3" fill="#2f6fd6" /><rect x="5" y="14.5" width="3" height="3" fill="#e5a800" /><rect x="10.5" y="14.5" width="3" height="3" fill="#8b3fc8" /><rect x="16" y="14.5" width="3" height="3" fill="#d33" /></g></svg>
+    <img src="/icons/tb-views.png" alt="" width="24" height="24" />
     <span class="tb-caret"></span>
   </span>
   <slot />

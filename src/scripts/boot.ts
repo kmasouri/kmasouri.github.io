@@ -101,15 +101,50 @@ function runBoot(boot: HTMLElement) {
     );
   }
 
+  // POST done (or skipped, or setup exited): the operating system loads.
+  // Any key or click during that skips straight to the desktop.
   function finish() {
     if (finished) return;
     finished = true;
     window.removeEventListener('keydown', onKey, true);
+    boot.removeEventListener('pointerdown', onPointer);
     try {
       sessionStorage.setItem('xp:booted', '1');
     } catch {
       /* ignore */
     }
+    if (reduceMotion) {
+      showDesktop();
+      return;
+    }
+    boot.classList.remove('in-setup');
+    boot.classList.add('os-loading');
+    boot.setAttribute('aria-label', 'Starting up');
+    const timer = setTimeout(showDesktop, 4000);
+    const skipLoading = (event: Event) => {
+      event.preventDefault();
+      clearTimeout(timer);
+      showDesktop();
+    };
+    // Wait a moment, so the key or click that ended the POST doesn't skip this too.
+    setTimeout(() => {
+      if (desktopShown) return;
+      window.addEventListener('keydown', skipLoading, true);
+      boot.addEventListener('pointerdown', skipLoading);
+    }, 400);
+    stopSkipping = () => {
+      window.removeEventListener('keydown', skipLoading, true);
+      boot.removeEventListener('pointerdown', skipLoading);
+    };
+  }
+
+  let desktopShown = false;
+  let stopSkipping = () => {};
+
+  function showDesktop() {
+    if (desktopShown) return;
+    desktopShown = true;
+    stopSkipping();
     const teardown = () => {
       boot.remove();
       root.classList.remove('booting');

@@ -1,5 +1,5 @@
 ---
-title: "How This Blog Works"
+title: "How This Site Works"
 date: 2026-10-05
 description: "Astro, Markdown, XP.css, TuiCss, and a GitHub Action: the whole stack behind this site in five minutes."
 tags: [meta, astro, web]
@@ -31,7 +31,7 @@ Each post starts with a block like this:
 
 ```yaml
 ---
-title: "How This Blog Works"
+title: "How This Site Works"
 date: 2026-10-05
 description: "Shown in the post list and search results."
 tags: [meta, astro]

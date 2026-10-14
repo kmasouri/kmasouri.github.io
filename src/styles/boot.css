@@ -343,3 +343,110 @@ html.booting .boot.in-setup {
     gap: 1ch;
   }
 }
+
+/* --------------------------------------------------- operating system load */
+/* XP's black startup screen: logo, and three blue blocks that keep sliding
+   through a rounded bar. Shown between the POST and the desktop. */
+
+.boot-os {
+  display: none;
+}
+
+html.booting .boot.os-loading {
+  animation: none;
+  background: #000;
+}
+
+.boot.os-loading > :not(.boot-os) {
+  display: none;
+}
+
+.boot.os-loading .boot-os {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(36px, 9vh, 72px);
+  padding-bottom: 6vh;
+  color: #fff;
+  font-family: Tahoma, 'Segoe UI', 'DejaVu Sans', sans-serif;
+  animation: boot-os-in 0.4s ease-out;
+}
+
+.boot-os-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1;
+}
+
+.boot-os-logo img {
+  margin-right: 18px;
+  margin-bottom: -6px;
+}
+
+.boot-os-word {
+  font: italic 700 clamp(30px, 5vw, 46px) 'Franklin Gothic Medium', 'Franklin Gothic', 'Trebuchet MS', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.boot-os-word sup {
+  margin-left: 2px;
+  color: #f78a2a;
+  font-size: 0.45em;
+  font-style: normal;
+  vertical-align: 1.1em;
+}
+
+.boot-os-bar {
+  position: relative;
+  width: 124px;
+  height: 15px;
+  border: 2px solid #b2b2b2;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.boot-os-bar span {
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 8px;
+  height: 7px;
+  border-radius: 1px;
+  background: linear-gradient(#5f7cf6, #2b45d8 45%, #1c33b8 55%, #3c5df5);
+  animation: boot-os-slide 2s steps(32) infinite;
+}
+
+.boot-os-bar span:nth-child(2) {
+  margin-left: 10px;
+}
+
+.boot-os-bar span:nth-child(3) {
+  margin-left: 20px;
+}
+
+.boot-os-copy {
+  position: absolute;
+  left: max(16px, 4vw);
+  bottom: max(16px, 3vh);
+  margin: 0;
+  font-size: 12px;
+}
+
+@keyframes boot-os-slide {
+  from {
+    transform: translateX(-30px);
+  }
+  to {
+    transform: translateX(130px);
+  }
+}
+
+@keyframes boot-os-in {
+  from {
+    opacity: 0;
+  }
+}
